@@ -6,16 +6,15 @@
 <style scoped>
  .button {
     padding: 5px 10px;
-    background-color: rgb(113, 113, 113);
+    background-color: transparent;
     border-radius: 10px;
     cursor: pointer;
-    color: var(--bg-color);
-    box-shadow: 0 0 15px 5px rgba(60, 60, 60, 0.3) inset;
+    color: var(--text-color);
     transition: 0.3s;
  }
 
  .button:hover {
-    background-color: rgb(122, 122, 122);
+    opacity: .9;
     transition: 0.3s;
  }
 

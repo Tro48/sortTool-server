@@ -1,6 +1,8 @@
 :root {
-    --text-color: #d4d4d4;
-    --bg-color: #3C3C3C;
-    --bg-color-section: #303030;
-    --bg-color-page: #4b4a4a;
+    --text-color: #5a5a5a;
+    --bg-color: #f2f2f2;
+    --bg-color-section: #fff;
+    --bg-color-page: var(--bg-color);
+    --hover-page: #426fd9;
+    --active: #0096d6;
 }

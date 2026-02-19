@@ -26,7 +26,7 @@ defineProps<{
   inline-size: 100%;
   padding: 5px;
   border-radius: 10px;
-  background-color: #575757;
+  background-color: var(--bg-color-section);
 }
 .info-block {
   display: flex;
@@ -35,7 +35,7 @@ defineProps<{
 .info-block > h4 {
   font-size: 0.7em;
   font-weight: 400;
-  color: black;
+  color: var(--text-color);
   padding-left: 5px;
   text-transform: uppercase;
 }

@@ -20,7 +20,7 @@ import SettingsBlock from './components/SettingsBlock.vue';
   display: flex;
   justify-content: center;
   inline-size: 100%;
-  background-color: black;
+  background-color: transparent;
   border-radius: 5px;
   color: var(--text-color);
   padding: 5px;
