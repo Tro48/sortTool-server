@@ -23,8 +23,10 @@ body {
 }
 
 #app {
-    max-inline-size: 1440px;
-    background-color: var(--bg-color);
+  inline-size: 100%;
+  block-size: 100%;
+  max-inline-size: 1920px;
+  background-color: var(--bg-color);
 }
 
 h1,

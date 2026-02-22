@@ -8,19 +8,18 @@ const handleClick = (e: MouseEvent) => {
 </script>
 <template>
   <section class="settings-section">
-    <SectionHeader>Настройки:</SectionHeader>
     <!-- <div>
         <ButtonUi>Загрузить настройки</ButtonUi>
         <ButtonUi>Сохранить настройки</ButtonUi>
       </div> -->
     <div class="settings-block">
       <div class="settings-block-container">
-        <SettingsElementUI
+        <!-- <SettingsElementUI
           title="Папка для получения файлов:"
           value="'folder dir'"
           buttonChild="+"
           @click="handleClick"
-        ></SettingsElementUI>  
+        ></SettingsElementUI> -->
         <SettingsElementUI
           title="разделитель:"
           value="'_'"
@@ -29,12 +28,12 @@ const handleClick = (e: MouseEvent) => {
         ></SettingsElementUI>
       </div>
       <div class="settings-block-container">
-        <SettingsElementUI
+        <!-- <SettingsElementUI
           title="Папка для неизвестных файлов:"
           value="'folder dir'"
           buttonChild="+"
           @click="handleClick"
-        ></SettingsElementUI>
+        ></SettingsElementUI> -->
         <SettingsElementUI
           title="игнорируемые символы:"
           value="'—, -, ()'"
@@ -58,10 +57,11 @@ const handleClick = (e: MouseEvent) => {
 .settings-section {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: start;
   padding: 5px;
   gap: 5px;
   inline-size: 100%;
+  block-size: 100%;
 }
 
 .settings-block {
