@@ -48,6 +48,7 @@ function select(index: number) {
   display: flex;
   flex-direction: column;
   background-color: var(--bg-color-section);
+  border-radius: 5px;
 }
 .tab {
   display: flex;
@@ -56,6 +57,7 @@ function select(index: number) {
   background: transparent;
   cursor: pointer;
   font: inherit;
+  border-radius: 5px;
 }
 .tab.active {
   background: var(--active);
@@ -69,6 +71,7 @@ function select(index: number) {
   block-size: 100%;
   background-color: var(--bg-color-section);
   padding: 5px;
+  border-radius: 5px;
 }
 .empty {
   color: #777;

@@ -58,7 +58,7 @@ watch(
   inline-size: 25%;
 }
 .log-state {
-  inline-size: 10%;
+  inline-size: 15%;
 }
 .log-message {
   inline-size: 60%;

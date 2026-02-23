@@ -35,8 +35,8 @@ import TabsPanel from './components/TabsPanel.vue';
 }
 .main {
   inline-size: 100%;
-  min-block-size: 95vh;
-  max-block-size: 96vh;
+  min-block-size: 94vh;
+  max-block-size: 95vh;
   padding: 0 5px;
   color: var(--text-color);
 }

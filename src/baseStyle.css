@@ -11,6 +11,10 @@
     border: none;
 }
 
+label {
+  cursor: pointer;
+}
+
 body {
     display: flex;
     flex-direction: column;

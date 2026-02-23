@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import ButtonUi from './ButtonUi.vue'
+
+const scriptStartState = true;
 </script>
 <template>
   <div class="controls-block">
-    <ButtonUi>Старт</ButtonUi>
-    <ButtonUi>Стоп</ButtonUi>
+    <ButtonUi tooltip="Остановить скрипт" v-if="scriptStartState"><v-icon>mdi-stop-circle-outline</v-icon></ButtonUi>
+    <ButtonUi tooltip="Запустить скрипт" v-else><v-icon>mdi-play-circle-outline</v-icon></ButtonUi>
   </div>
 </template>
 <style scoped>
