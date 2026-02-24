@@ -36,5 +36,8 @@ const selected = ref('')
   --vs-option-selected-background-color: var(--active);
   --vs-option-hover-background-color: var(--hover-page);
   --vs-border: none;
+  --vs-padding: 4px;
+  --vs-option-padding: 4px;
+  --vs-font-size: 14px;
 }
 </style>

@@ -4,5 +4,6 @@
     --bg-color-section: #fff;
     --bg-color-page: var(--bg-color);
     --active: #4297f9;
-    --hover-page: #9dc8ff;
+    --hover-menu-button: #9dc8ff;
+    --hover-page: #cccccc;
 }

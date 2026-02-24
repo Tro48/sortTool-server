@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import ControlsBlock from './components/ControlsBlock.vue';
-import LogsBlock from './components/LogsBlock.vue';
-import SettingsBlock from './components/SettingsBlock.vue';
-import TabsPanel from './components/TabsPanel.vue';
+import ControlsBlock from './components/ControlsBlock.vue'
+import LogsBlock from './components/LogsBlock.vue'
+import SettingsBlock from './components/SettingsBlock.vue'
+import TabsPanel from './components/TabsPanel.vue'
 </script>
 
 <template>
@@ -11,10 +11,7 @@ import TabsPanel from './components/TabsPanel.vue';
     <ControlsBlock></ControlsBlock>
   </header>
   <main class="main">
-    <TabsPanel
-      :names="['Настройки', 'Логи']"
-      :panels="[SettingsBlock, LogsBlock]"
-    />
+    <TabsPanel :names="['Настройки', 'Логи']" :panels="[SettingsBlock, LogsBlock]" />
   </main>
 </template>
 
@@ -35,8 +32,8 @@ import TabsPanel from './components/TabsPanel.vue';
 }
 .main {
   inline-size: 100%;
-  min-block-size: 94vh;
-  max-block-size: 95vh;
+  min-block-size: 85vh;
+  max-block-size: 90vh;
   padding: 0 5px;
   color: var(--text-color);
 }

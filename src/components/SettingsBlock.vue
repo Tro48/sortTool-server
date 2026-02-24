@@ -215,7 +215,6 @@ const tagsListMock = [
   display: flex;
   flex-direction: column;
   justify-content: start;
-  padding: 5px;
   gap: 5px;
   inline-size: 100%;
   block-size: 100%;
@@ -227,7 +226,9 @@ const tagsListMock = [
   align-items: center;
   gap: 5px;
   inline-size: 100%;
-  border-bottom: 1px solid var(--bg-color);
+  background-color: var(--bg-color-section);
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
 
 .settings-blocks-container {
@@ -252,15 +253,16 @@ const tagsListMock = [
 .form {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
   gap: 5px;
 }
 
 .input-header {
   display: flex;
   gap: 5px;
-  font-size: 18px;
-  font-weight: 400;
+  inline-size: 100%;
+  font-size: 16px;
+  font-weight: 600;
 }
 
 .settings-block {
@@ -272,6 +274,7 @@ const tagsListMock = [
   border: 1px solid var(--bg-color);
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
   border-radius: 5px;
+  background-color: var(--bg-color-section);
 }
 
 .settings-block-tag {
@@ -285,7 +288,7 @@ const tagsListMock = [
   overflow: hidden;
   gap: 5px;
   padding: 5px;
-  border: 1px solid var(--bg-color);
+  background-color: var(--bg-color-section);
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
   border-radius: 5px;
 }
@@ -296,10 +299,6 @@ const tagsListMock = [
   padding: 5px;
   gap: 5px;
   border-bottom: 1px solid var(--bg-color);
-}
-
-.input-header {
-  inline-size: 100%;
 }
 
 .tag-list {
@@ -313,6 +312,7 @@ const tagsListMock = [
   scroll-behavior: smooth;
   border: 1px solid var(--bg-color);
   border-radius: 5px;
+  scrollbar-width: thin;
 }
 
 .tag-list-item {

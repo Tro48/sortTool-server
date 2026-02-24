@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { nextTick, onMounted, ref, watch } from 'vue'
 import mockLogs from '../mockLogs.json'
-import LogItem from './LogItem.vue'
+import LogItem from './Logitem.vue'
 
 const logsList = ref<HTMLUListElement | null>(null)
 
@@ -46,8 +46,11 @@ watch(
   display: flex;
   gap: 5px;
   inline-size: 100%;
-  border-bottom: 1px solid var(--bg-color);
-  font-size: 24px;
+  padding: 5px;
+  background-color: var(--bg-color-section);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  font-size: 14px;
 }
 
 .section-header > span:not(:last-child) {
@@ -80,7 +83,13 @@ watch(
   gap: 5px;
   inline-size: 100%;
   block-size: 100%;
+  padding: 5px;
+  background-color: var(--bg-color-section);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
   overflow-y: auto;
   scroll-behavior: smooth;
+  font-size: 14px;
+  scrollbar-width: thin;
 }
 </style>

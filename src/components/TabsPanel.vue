@@ -48,20 +48,38 @@ function select(index: number) {
   display: flex;
   flex-direction: column;
   background-color: var(--bg-color-section);
+  gap: 5px;
   border-radius: 5px;
+  inline-size: 20%;
+  padding: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
 .tab {
   display: flex;
-  border-bottom: 1px solid var(--bg-color);
+  justify-content: center;
+  align-items: center;
   padding: 5px 30px;
-  background: transparent;
+  background-color: transparent;
+  border: 1px solid var(--bg-color);
+  border-radius: 5px;
   cursor: pointer;
   font: inherit;
-  border-radius: 5px;
+  transition: background-color .3s;
 }
 .tab.active {
-  background: var(--active);
+  background-color: var(--active);
   color: #fff;
+  cursor:default;
+}
+
+.tab.active:hover {
+  background-color: var(--active);
+  transition: background-color .3s;
+}
+
+.tab:hover {
+  background-color: var(--hover-menu-button);
+  transition: background-color .3s;
 }
 .tab-panel {
   display: flex;
@@ -69,8 +87,6 @@ function select(index: number) {
   align-items: center;
   inline-size: 100%;
   block-size: 100%;
-  background-color: var(--bg-color-section);
-  padding: 5px;
   border-radius: 5px;
 }
 .empty {

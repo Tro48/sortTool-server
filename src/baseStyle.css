@@ -5,6 +5,7 @@
     box-sizing: border-box;
 }
 
+
 :focus,
 :focus-visible {
     outline: none;
@@ -22,14 +23,13 @@ body {
     align-items: center;
     background-color: var(--bg-color-page);
     margin: 0;
-    block-size: 100%;
-    font-size: 24px;
+    font-size: 14px;
 }
 
 #app {
   inline-size: 100%;
-  block-size: 100%;
-  max-inline-size: 1920px;
+  max-block-size: 100vh;
+  max-inline-size: 1480px;
   background-color: var(--bg-color);
 }
 
