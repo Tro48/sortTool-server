@@ -1,0 +1,6 @@
+{
+    "foldersDir": "/Users/andrey/project/sortTool-server/backend/db",
+    "listenDir": "/Users/andrey/project/sortTool-server/backend/db",
+    "separators": [{ "id": 1, "value": "/" }, { "id": 2, "value": "\\" }],
+    "ignoredChars": [{ "id": 1, "value": "~" }, { "id": 2, "value": "#" }, { "id": 3, "value": "%" }]
+}

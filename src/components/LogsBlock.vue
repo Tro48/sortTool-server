@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { nextTick, onMounted, ref, watch } from 'vue'
 import mockLogs from '../mockLogs.json'
-import LogItem from './Logitem.vue'
+import LogItem from './LogItem.vue'
 
 const logsList = ref<HTMLUListElement | null>(null)
 

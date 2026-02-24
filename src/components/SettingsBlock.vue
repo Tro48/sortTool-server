@@ -1,11 +1,21 @@
 <script setup lang="ts">
+import { onMounted } from 'vue'
 import ButtonUi from './ButtonUi.vue'
 import Input from './Input.vue'
 import SearchInput from './SearchInput.vue'
 import SettingsElementsListUi from './SettingsElementsListUi.vue'
+import { useIgnoredCharsStore, useSeparatorsStore } from '@/stores/useSettingsStore'
+
+const ignoredCharsStore = useIgnoredCharsStore()
+const separatorsStore = useSeparatorsStore()
 const handleClick = (e: MouseEvent) => {
   console.log(e)
 }
+
+onMounted(() => {
+  ignoredCharsStore.fetchIgnoredChars()
+  separatorsStore.fetchSeparators()
+})
 
 const separatorsMock = [
   {
@@ -159,7 +169,7 @@ const tagsListMock = [
         <form class="form" action="">
           <div class="input-group">
             <h3 class="input-header">
-              Разделитель: <span><SettingsElementsListUi :separators="separatorsMock" /></span>
+              Разделитель: <span><SettingsElementsListUi :loader="separatorsStore.loader" :data="separatorsStore.separators" /></span>
             </h3>
             <Input type="text" placeholder="_,-,!..." />
           </div>
@@ -171,7 +181,7 @@ const tagsListMock = [
           <div class="input-group">
             <h3 class="input-header">
               Игнорируемые символы:
-              <span><SettingsElementsListUi :separators="separatorsMock" /></span>
+              <span><SettingsElementsListUi :loader="ignoredCharsStore.loader" :data="ignoredCharsStore.ignoredChars" /></span>
             </h3>
             <Input type="text" placeholder="&, P, +, %..." />
           </div>
@@ -259,6 +269,7 @@ const tagsListMock = [
 
 .input-header {
   display: flex;
+  align-items: center;
   gap: 5px;
   inline-size: 100%;
   font-size: 16px;
