@@ -1,7 +1,9 @@
+import dotenv from 'dotenv';
+dotenv.config();
 import express from 'express'
 import fs from 'fs'
 const app = express()
-const port = 5050
+const port = process.env.VITE_PORT
 app.use(express.static('dist'))
 
 app.get('/folders', (req, res) => {
