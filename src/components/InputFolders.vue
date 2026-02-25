@@ -1,29 +1,34 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import type { Option } from 'vue3-select-component'
+import { useFoldersStore } from '@/stores/useSettingsStore'
+import { onMounted, ref } from 'vue'
 import VueSelect from 'vue3-select-component'
+import Skeleton from './Skeleton.vue'
 
-const props = withDefaults(
-  defineProps<{
-    customClass?: string
-    options?: Option<string>[]
-  }>(),
-  {
-    customClass: '',
-    options: () => [],
-  },
-)
+const props = defineProps<{
+  customClass?: string
+}>()
 
-const { options } = props
+const foldersStore = useFoldersStore()
+
+onMounted(() => {
+  foldersStore.fetchAllFolders()
+})
 
 const selected = ref('')
 </script>
 <template>
-  <VueSelect
-    class="search-input"
-    v-model="selected"
-    :options="options"
-  />
+    <VueSelect
+      v-if="foldersStore.loader"
+      class="search-input"
+      v-model="selected"
+      :options="foldersStore.folders"
+    />
+    <VueSelect
+      v-else-if="foldersStore.getFolders"
+      class="search-input"
+      v-model="selected"
+      :options="foldersStore.getFolders"
+    />
 </template>
 <style scoped>
 .search-input {

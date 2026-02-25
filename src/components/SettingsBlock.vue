@@ -1,158 +1,38 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import {
+  useIgnoredCharsStore,
+  useSeparatorsStore,
+  useTagsDirStore,
+} from '@/stores/useSettingsStore'
+import { computed, onMounted, ref } from 'vue'
 import ButtonUi from './ButtonUi.vue'
 import Input from './Input.vue'
-import SearchInput from './SearchInput.vue'
+import InputFolders from './InputFolders.vue'
 import SettingsElementsListUi from './SettingsElementsListUi.vue'
-import { useIgnoredCharsStore, useSeparatorsStore } from '@/stores/useSettingsStore'
+import Skeleton from './Skeleton.vue'
 
 const ignoredCharsStore = useIgnoredCharsStore()
 const separatorsStore = useSeparatorsStore()
-const handleClick = (e: MouseEvent) => {
-  console.log(e)
-}
+const tagsDirStore = useTagsDirStore()
+
+const search = ref('')
+
+const tagsEntries = computed(() => {
+  const entries = tagsDirStore.getTagsDir ?? []
+  const q = String(search.value || '').trim().toLowerCase()
+  if (!q) return entries
+  return entries.filter(([k, v]) => {
+    const key = String(k ?? '').toLowerCase()
+    const val = String(v ?? '').toLowerCase()
+    return key.includes(q) || val.includes(q)
+  })
+})
 
 onMounted(() => {
   ignoredCharsStore.fetchIgnoredChars()
   separatorsStore.fetchSeparators()
+  tagsDirStore.fetchAllTagsDir()
 })
-
-const separatorsMock = [
-  {
-    id: 1,
-    value: '_',
-  },
-  {
-    id: 2,
-    value: '-',
-  },
-  {
-    id: 3,
-    value: '?',
-  },
-]
-
-const foldersMock = [
-  {
-    label: 'Folder 1',
-    value: 'folder1',
-  },
-  {
-    label: 'Folder 2',
-    value: 'folder2',
-  },
-  {
-    label: 'Folder 3',
-    value: 'folder3',
-  },
-]
-
-const tagsMock = [
-  {
-    label: 'CMYK',
-    value: 'CMYK',
-  },
-  {
-    label: 'CMYKV',
-    value: 'CMYKV',
-  },
-  {
-    label: 'CMY',
-    value: 'CMY',
-  },
-]
-
-const tagsListMock = [
-  {
-    id: '1',
-    tag: 'CMYK',
-    folderDir: 'folder1',
-  },
-  {
-    id: '2',
-    tag: 'CMYKV',
-    folderDir: 'folder2',
-  },
-  {
-    id: '3',
-    tag: 'CMY',
-    folderDir: 'folder3',
-  },
-  {
-    id: '4',
-    tag: 'CMY',
-    folderDir: 'folder3',
-  },
-  {
-    id: '5',
-    tag: 'CMY',
-    folderDir: 'folder3',
-  },
-  {
-    id: '6',
-    tag: 'CMY',
-    folderDir: 'folder3',
-  },
-    {
-    id: '1',
-    tag: 'CMYK',
-    folderDir: 'folder1',
-  },
-  {
-    id: '2',
-    tag: 'CMYKV',
-    folderDir: 'folder2',
-  },
-  {
-    id: '3',
-    tag: 'CMY',
-    folderDir: 'folder3',
-  },
-  {
-    id: '4',
-    tag: 'CMY',
-    folderDir: 'folder3',
-  },
-  {
-    id: '5',
-    tag: 'CMY',
-    folderDir: 'folder3',
-  },
-  {
-    id: '6',
-    tag: 'CMY',
-    folderDir: 'folder3',
-  },  {
-    id: '1',
-    tag: 'CMYK',
-    folderDir: 'folder1',
-  },
-  {
-    id: '2',
-    tag: 'CMYKV',
-    folderDir: 'folder2',
-  },
-  {
-    id: '3',
-    tag: 'CMY',
-    folderDir: 'folder3',
-  },
-  {
-    id: '4',
-    tag: 'CMY',
-    folderDir: 'folder3',
-  },
-  {
-    id: '5',
-    tag: 'CMY',
-    folderDir: 'folder3',
-  },
-  {
-    id: '6',
-    tag: 'CMY',
-    folderDir: 'folder3',
-  },
-]
 </script>
 <template>
   <section class="settings-section">
@@ -169,7 +49,12 @@ const tagsListMock = [
         <form class="form" action="">
           <div class="input-group">
             <h3 class="input-header">
-              Разделитель: <span><SettingsElementsListUi :loader="separatorsStore.loader" :data="separatorsStore.separators" /></span>
+              Разделитель:
+              <span
+                ><SettingsElementsListUi
+                  :loader="separatorsStore.loader"
+                  :data="separatorsStore.separators"
+              /></span>
             </h3>
             <Input type="text" placeholder="_,-,!..." />
           </div>
@@ -181,7 +66,11 @@ const tagsListMock = [
           <div class="input-group">
             <h3 class="input-header">
               Игнорируемые символы:
-              <span><SettingsElementsListUi :loader="ignoredCharsStore.loader" :data="ignoredCharsStore.ignoredChars" /></span>
+              <span
+                ><SettingsElementsListUi
+                  :loader="ignoredCharsStore.loader"
+                  :data="ignoredCharsStore.ignoredChars"
+              /></span>
             </h3>
             <Input type="text" placeholder="&, P, +, %..." />
           </div>
@@ -196,7 +85,7 @@ const tagsListMock = [
           </div>
           <div class="input-group">
             <label class="input-header" for="tag-folder">Выбрать папку:</label>
-            <SearchInput :options="foldersMock" placeholder="Выберите папку" />
+            <InputFolders placeholder="Выберите папку" />
           </div>
           <ButtonUi type="submit"><v-icon>mdi-tag-plus-outline</v-icon></ButtonUi>
         </form>
@@ -205,15 +94,16 @@ const tagsListMock = [
     <div class="tag-list-block">
       <div class="tag-list-header-block">
         <h3 class="input-header">Список цветовых схем:</h3>
-        <SearchInput :options="tagsMock" placeholder="Поиск по цветовым схемам" />
+        <Input type="search" placeholder="Поиск" v-model="search" />
       </div>
-      <ul class="tag-list">
-        <li class="tag-list-item" v-for="tagItem in tagsListMock">
-          <span>{{ tagItem.tag }}</span>
-          <span>{{ tagItem.folderDir }}</span>
-          <ButtonUi customClass="delete-button" tooltip="Удалить цветовую схему"
-            ><v-icon>mdi-close-circle-outline</v-icon></ButtonUi
-          >
+      <Skeleton v-if="tagsDirStore.loader" width="100%" height="100%" />
+      <ul v-else-if="tagsDirStore.getTagsDir" class="tag-list">
+        <li class="tag-list-item" v-for="[key, value] in tagsEntries" :key="key">
+          <span>{{ key }}</span>
+          <span>{{ value }}</span>
+          <ButtonUi customClass="delete-button" tooltip="Удалить цветовую схему">
+            <v-icon>mdi-close-circle-outline</v-icon>
+          </ButtonUi>
         </li>
       </ul>
     </div>
@@ -347,8 +237,7 @@ const tagsListMock = [
   transition: background-color 0.3s ease;
 }
 
-.tag-list-item:hover{
+.tag-list-item:hover {
   background-color: var(--hover-page);
 }
-
 </style>
