@@ -6,6 +6,8 @@ const props = defineProps({
   placeholder: String,
 })
 
+const model = defineModel()
+
 const emit = defineEmits(['update:modelValue', 'input', 'change'])
 
 function onInput(e: Event) {
@@ -16,6 +18,7 @@ function onInput(e: Event) {
 </script>
 <template>
   <input
+    v-model="model"
     :id="id"
     :type="type"
     :placeholder="placeholder"

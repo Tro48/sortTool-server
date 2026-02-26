@@ -1,6 +1,1 @@
-{
-    "foldersDir": "/Users/andrey/project/sortTool-server/backend/db",
-    "listenDir": "/Users/andrey/project/sortTool-server/backend/db",
-    "separators": [{ "id": 1, "value": "/" }, { "id": 2, "value": "\\" }],
-    "ignoredChars": [{ "id": 1, "value": "~" }, { "id": 2, "value": "#" }, { "id": 3, "value": "%" }]
-}
+{"foldersDir":"/Users/andrey/project/sortTool-server/backend/db","listenDir":"/Users/andrey/project/sortTool-server/backend/db","separators":[{"id":0.9915145861308508,"value":","},{"id":0.71911231904465,"value":"_"}],"ignoredChars":[{"id":1,"value":"~"},{"id":2,"value":"#"},{"id":3,"value":"%"}]}

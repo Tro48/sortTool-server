@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const props = defineProps<{ customClass?: string; tooltip?: string }>()
+const props = defineProps<{ customClass?: string; tooltip?: string;}>()
 </script>
 
 <template>

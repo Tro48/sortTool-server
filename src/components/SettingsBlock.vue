@@ -28,6 +28,13 @@ const tagsEntries = computed(() => {
   })
 })
 
+const separatorData = ref('')
+
+const hendlerFormSeparator = () => {
+  separatorsStore.fetchSetSeparator(separatorData.value)
+  separatorData.value = ''
+}
+
 onMounted(() => {
   ignoredCharsStore.fetchIgnoredChars()
   separatorsStore.fetchSeparators()
@@ -46,7 +53,7 @@ onMounted(() => {
     </div>
     <div class="settings-blocks-container">
       <div class="settings-block">
-        <form class="form" action="">
+        <form @submit.prevent @submit="hendlerFormSeparator" class="form">
           <div class="input-group">
             <h3 class="input-header">
               Разделитель:
@@ -56,7 +63,7 @@ onMounted(() => {
                   :data="separatorsStore.separators"
               /></span>
             </h3>
-            <Input type="text" placeholder="_,-,!..." />
+            <Input v-model="separatorData" type="text" placeholder="_,-,!..." />
           </div>
           <ButtonUi type="submit"><v-icon>mdi-plus-circle-outline</v-icon></ButtonUi>
         </form>

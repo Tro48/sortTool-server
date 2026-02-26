@@ -28,6 +28,20 @@ export const useSeparatorsStore = defineStore('separators', {
       this.separators = await response.json()
       this.loader = false
     },
+    async fetchSetSeparator(sepData:string) {
+      this.loader = true
+      await fetch(apiUrl + 'separators/set/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({separator: sepData})
+      })
+      .then((res) => res.json())
+      .then((data) => this.separators = data)
+      .catch(error => console.error('Ошибка:', error))
+      .finally(() => this.loader = false)    
+    }
   },
 })
 
