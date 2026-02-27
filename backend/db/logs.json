@@ -1,4 +1,5 @@
-[
+{
+  "logs": [
   { "name": "Document_001.pdf", "state": true, "message": "Файл Document_001.pdf успешно отправлен" },
   { "name": "Report_Final.pdf", "state": false, "message": "Файл Report_Final.pdf не был отправлен" },
   { "name": "Image_Scanner.pdf", "state": true, "message": "Файл Image_Scanner.pdf отправлен" },
@@ -100,3 +101,4 @@
   { "name": "Final_099.pdf", "state": true, "message": "Файл Final_099.pdf успешно отправлен" },
   { "name": "Final_100.pdf", "state": true, "message": "Файл Final_100.pdf успешно отправлен" }
 ]
+}
