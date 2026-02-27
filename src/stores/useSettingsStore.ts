@@ -28,20 +28,21 @@ export const useSeparatorsStore = defineStore('separators', {
       this.separators = await response.json()
       this.loader = false
     },
-    async fetchSetSeparator(sepData:string) {
+    async fetchSetSeparator(sepData: string) {
       this.loader = true
       await fetch(apiUrl + 'separators/set/', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({separator: sepData})
+        body: JSON.stringify({ value: sepData }),
       })
-      .then((res) => res.json())
-      .then((data) => this.separators = data)
-      .catch(error => console.error('Ошибка:', error))
-      .finally(() => this.loader = false)    
-    }
+        .then((res) => res.json())
+        .then((data) => (this.separators = data))
+        .catch((error) => console.error('Ошибка:', error))
+        .finally(() => (this.loader = false))
+        this.fetchSeparators()
+    },
   },
 })
 
@@ -72,16 +73,16 @@ export const useTagsDirStore = defineStore('tagsDir', {
     async fetchAllTagsDir() {
       this.loader = true
       fetch(apiUrl + 'tagsDir')
-      .then((res) => res.json())
-      .then((data) => {
-        this.tagsDir = data
-        this.loader = false
-      })
-      .finally(() => this.loader = false)
+        .then((res) => res.json())
+        .then((data) => {
+          this.tagsDir = data
+          this.loader = false
+        })
+        .finally(() => (this.loader = false))
     },
   },
   getters: {
-    getTagsDir: (state) => (Object.entries(state.tagsDir)),
-    getTagsNames: (state) => (Object.keys(state.tagsDir))
+    getTagsDir: (state) => Object.entries(state.tagsDir),
+    getTagsNames: (state) => Object.keys(state.tagsDir),
   },
 })

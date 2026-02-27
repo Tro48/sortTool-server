@@ -2,14 +2,17 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import express from 'express'
 import fs, { readFile, readFileSync } from 'fs'
+import crypto from 'crypto'
 import path from 'path'
+import { setSettings } from './methods.ts'
 dotenv.config()
 const app = express()
 const port = process.env.VITE_PORT
 const foldersDir = process.env.FOLDERS_PATH
+const settingsFileDir = 'backend/db/settings.json'
 app.use(express.static('dist'))
 app.use(cors())
-app.use(express.json());
+app.use(express.json())
 
 app.get('/api/folders', (req, res) => {
   const dirPath = path.join(foldersDir ? foldersDir : '')
@@ -21,46 +24,19 @@ app.get('/api/folders', (req, res) => {
 })
 
 app.get('/api/separators', (req, res) => {
-  fs.readFile('backend/db/baseSettings.json', 'utf8', (err, data) => {
+  fs.readFile(settingsFileDir, 'utf8', (err, data) => {
     if (err) {
-      console.error(err)
-      res.status(500).send('Error reading base settings data')
+      res.status(500).send('Ошибка чтения файла настроек')
       return
     }
     const jsonData = JSON.parse(data)
     res.send(JSON.stringify(jsonData.separators))
   })
 })
-app.post('/api/separators/set/', (req, res) => {
-  const { separator } = req.body
-  if (!separator) return res.status(400).json({ error: 'Нет данных для добавления' })
-  const newSeparator = {
-    id: Math.random(),
-    value: separator,
-  }
-  try {
-    const settings = JSON.parse(readFileSync('backend/db/baseSettings.json', {encoding: 'utf-8'})) 
-    settings.separators.push(newSeparator);
-    fs.writeFile('backend/db/baseSettings.json', JSON.stringify(settings), (err)=>{
-      if (err) res.status(401).json({ error: 'Ошибка сохранения данных' })
-    })
-  } catch (error) {
-    res.status(405).json({ error: 'Ошибка чтения данных из файла' })
-  }
-  fs.readFile('backend/db/baseSettings.json', 'utf8', (err, data) => {
-    if (err) {
-      console.error(err)
-      res.status(500).send('Error reading base settings data')
-      return
-    }
-    const jsonData = JSON.parse(data)
-    console.log(jsonData)
-    res.send(JSON.stringify(jsonData.separators))
-  })
-})
+app.post('/api/separators/set/', (req, res) => setSettings(req, res, 'separators', settingsFileDir))
 
 app.get('/api/ignoredChars', (req, res) => {
-  fs.readFile('backend/db/baseSettings.json', 'utf8', (err, data) => {
+  fs.readFile(settingsFileDir, 'utf8', (err, data) => {
     if (err) {
       console.error(err)
       res.status(500).send('Error reading base settings data')
@@ -83,13 +59,14 @@ app.get('/api/logs', (req, res) => {
 })
 
 app.get('/api/tagsDir', (req, res) => {
-  fs.readFile('backend/db/tagsDir.json', 'utf8', (err, data) => {
+  fs.readFile(settingsFileDir, 'utf8', (err, data) => {
     if (err) {
       console.error(err)
       res.status(500).send('Error reading tags directory data')
       return
     }
-    res.send(data)
+    const settings = JSON.parse(data)
+    res.send(settings.tagsDir)
   })
 })
 
