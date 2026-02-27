@@ -19,22 +19,21 @@ const {
   folders,
   pendingFolders,
   getFolders,
-  getTagsDir,
-  getTagsNames,
 } = storeToRefs(settings)
 
 const search = ref('')
 
 const tagsEntries = computed(() => {
-  // const entries = getTagsDir ?? []
-  // const q = String(search.value || '')
-  //   .trim()
-  //   .toLowerCase()
-  // if (!q) return entries
-  // return entries.filter(([k, v]) => {
-  //   const key = String(k ?? '').toLowerCase()
-  //   return key.includes(q) || val.includes(q)
-  // })
+  const map = tagsDir.value ?? new Map<string, string>()
+  const entries = Array.from(map.entries())
+  const q = String(search.value || '')
+    .trim()
+    .toLowerCase()
+  if (!q) return entries
+  return entries.filter(([k]) => {
+    const key = String(k ?? '').toLowerCase()
+    return key.includes(q)
+  })
 })
 
 const separatorData = ref('')

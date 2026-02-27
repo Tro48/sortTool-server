@@ -1,8 +1,7 @@
 import cors from 'cors'
 import dotenv from 'dotenv'
 import express from 'express'
-import fs, { readFile, readFileSync } from 'fs'
-import crypto from 'crypto'
+import fs from 'fs'
 import path from 'path'
 import { setSettings } from './methods.ts'
 dotenv.config()

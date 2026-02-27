@@ -1,22 +1,24 @@
 import { defineStore } from 'pinia'
 const apiUrl = `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_PORT}/api/`
 
+interface ISettingsState {
+  ignoredChars: { id: string; value: string }[]
+  pendingChars: boolean
+  separators: { id: string; value: string }[]
+  pendingSep: boolean
+  tagsDir: Map<string, string>
+  pendingTagsDir: boolean
+  folders: string[]
+  pendingFolders: boolean
+}
+
 export const useSettings = defineStore('settingsStore', {
-  state: (): {
-    ignoredChars: { id: string; value: string }[]
-    pendingChars: boolean
-    separators: { id: string; value: string }[]
-    pendingSep: boolean
-    tagsDir: { [key: string]: string }
-    pendingTagsDir: boolean
-    folders: string[]
-    pendingFolders: boolean
-  } => ({
+  state: (): ISettingsState => ({
     ignoredChars: [],
     pendingChars: false,
     separators: [],
     pendingSep: false,
-    tagsDir: {},
+    tagsDir: new Map(),
     pendingTagsDir: false,
     folders: [],
     pendingFolders: false,
@@ -66,7 +68,7 @@ export const useSettings = defineStore('settingsStore', {
       try {
         const response = await fetch(apiUrl + 'tagsDir')
         const data = await response.json()
-        this.tagsDir = data
+        this.tagsDir = new Map(Object.entries(data).map(([key, value]) => [key, value as string]))
       } catch (error) {
         console.error('Ошибка:', error)
       } finally {
@@ -87,8 +89,6 @@ export const useSettings = defineStore('settingsStore', {
   getters: {
     getFolders: (state) =>
       (state.folders ?? []).map((item: string) => ({ label: item, value: item })),
-    getTagsDir: (state) => Object.entries(state.tagsDir),
-    getTagsNames: (state) => Object.keys(state.tagsDir),
   },
 })
 
