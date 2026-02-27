@@ -2,9 +2,10 @@
   "foldersDir": "/Users/andrey/project/sortTool-server/backend/db",
   "listenDir": "/Users/andrey/project/sortTool-server/backend/db",
   "separators": [
-    { "id": "056eee3475a2c1cc7c5a1aed4cffed17", "value": "6" },
-    { "id": "2f69b062cef223bb82a5e3379bde385a", "value": "8" },
-    { "id": "e9064da868d9e4b162543ff0fb6497c8", "value": "0" }
+    { "id": "bc2d02d87870301fcfebf63d6f05103e", "value": "2" },
+    { "id": "a0d95928096332839747483688f19581", "value": "4" },
+    { "id": "1c2d1bcaa3e0c768b13b26019fc040a6", "value": "5" },
+    { "id": "6ef211df0c9622c793acc12ba190a06d", "value": "7" }
   ],
   "ignoredChars": [
     { "id": 1, "value": "~" },

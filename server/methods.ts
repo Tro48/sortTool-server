@@ -20,17 +20,17 @@ export const setSettings = (req, res, key, settingsFileDir) => {
         res.status(501).send('Ошибка записи файла настроек')
         return
       }
-      res.status(200)
+      res.status(201).send(JSON.stringify(newSettingsItem))
     })
   })
 
-  fs.readFile(settingsFileDir, 'utf8', (err, data) => {
-    if (err) {
-      console.error(err)
-      res.status(500).send('Ошибка чтения файла настроек')
-      return
-    }
-    const jsonData = JSON.parse(data)
-    res.send(JSON.stringify(jsonData.separators))
-  })
+  // fs.readFile(settingsFileDir, 'utf8', (err, data) => {
+  //   if (err) {
+  //     console.error(err)
+  //     res.status(500).send('Ошибка чтения файла настроек')
+  //     return
+  //   }
+  //   const jsonData = JSON.parse(data)
+  //   res.status(201).send(JSON.stringify(jsonData.separators))
+  // })
 }

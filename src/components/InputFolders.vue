@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { useFoldersStore } from '@/stores/useSettingsStore'
+import { useSettings } from '@/stores/useSettingsStore'
+import { storeToRefs } from 'pinia'
 import { onMounted, ref } from 'vue'
 import VueSelect from 'vue3-select-component'
 import Skeleton from './Skeleton.vue'
@@ -8,26 +9,27 @@ const props = defineProps<{
   customClass?: string
 }>()
 
-const foldersStore = useFoldersStore()
+const settings = useSettings()
+const {folders, getFolders, pendingFolders} = storeToRefs(settings)
 
 onMounted(() => {
-  foldersStore.fetchAllFolders()
+  settings.fetchAllFolders()
 })
 
 const selected = ref('')
 </script>
 <template>
     <VueSelect
-      v-if="foldersStore.loader"
+      v-if="pendingFolders"
       class="search-input"
       v-model="selected"
-      :options="foldersStore.folders"
+      :options="getFolders"
     />
     <VueSelect
-      v-else-if="foldersStore.getFolders"
+      v-else-if="getFolders"
       class="search-input"
       v-model="selected"
-      :options="foldersStore.getFolders"
+      :options="getFolders"
     />
 </template>
 <style scoped>

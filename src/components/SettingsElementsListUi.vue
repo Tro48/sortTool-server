@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import Skeleton from './Skeleton.vue'
 
 const props = defineProps<{
   data: { id: number | string; value: string }[]
   loader?: boolean
   skeletonCount?: number
+  fethFunc?: ()=> void
 }>()
 
 const count = computed(() => props.skeletonCount ?? 3)
+
 </script>
 
 <template>

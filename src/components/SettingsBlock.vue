@@ -1,9 +1,6 @@
 <script setup lang="ts">
-import {
-  useIgnoredCharsStore,
-  useSeparatorsStore,
-  useTagsDirStore,
-} from '@/stores/useSettingsStore'
+import { useSettings } from '@/stores/useSettingsStore'
+import { storeToRefs } from 'pinia'
 import { computed, onMounted, ref } from 'vue'
 import ButtonUi from './ButtonUi.vue'
 import Input from './Input.vue'
@@ -11,34 +8,51 @@ import InputFolders from './InputFolders.vue'
 import SettingsElementsListUi from './SettingsElementsListUi.vue'
 import Skeleton from './Skeleton.vue'
 
-const ignoredCharsStore = useIgnoredCharsStore()
-const separatorsStore = useSeparatorsStore()
-const tagsDirStore = useTagsDirStore()
+const settings = useSettings()
+const {
+  ignoredChars,
+  pendingChars,
+  separators,
+  pendingSep,
+  tagsDir,
+  pendingTagsDir,
+  folders,
+  pendingFolders,
+  getFolders,
+  getTagsDir,
+  getTagsNames,
+} = storeToRefs(settings)
 
 const search = ref('')
 
 const tagsEntries = computed(() => {
-  const entries = tagsDirStore.getTagsDir ?? []
-  const q = String(search.value || '').trim().toLowerCase()
-  if (!q) return entries
-  return entries.filter(([k, v]) => {
-    const key = String(k ?? '').toLowerCase()
-    const val = String(v ?? '').toLowerCase()
-    return key.includes(q) || val.includes(q)
-  })
+  // const entries = getTagsDir ?? []
+  // const q = String(search.value || '')
+  //   .trim()
+  //   .toLowerCase()
+  // if (!q) return entries
+  // return entries.filter(([k, v]) => {
+  //   const key = String(k ?? '').toLowerCase()
+  //   return key.includes(q) || val.includes(q)
+  // })
 })
 
 const separatorData = ref('')
 
 const hendlerFormSeparator = () => {
-  separatorsStore.fetchSetSeparator(separatorData.value)
+  settings.fetchSetSeparator(separatorData.value)
+  separatorData.value = ''
+}
+
+const hendlerFormignoredChars = () => {
+  settings.fetchSetSeparator(separatorData.value)
   separatorData.value = ''
 }
 
 onMounted(() => {
-  ignoredCharsStore.fetchIgnoredChars()
-  separatorsStore.fetchSeparators()
-  tagsDirStore.fetchAllTagsDir()
+  settings.fetchIgnoredChars()
+  settings.fetchSeparators()
+  settings.fetchAllTagsDir()
 })
 </script>
 <template>
@@ -59,8 +73,9 @@ onMounted(() => {
               Разделитель:
               <span
                 ><SettingsElementsListUi
-                  :loader="separatorsStore.loader"
-                  :data="separatorsStore.separators"
+                  :loader="pendingSep"
+                  :data="separators"
+                  :skeletonCount="separators.length"
               /></span>
             </h3>
             <Input v-model="separatorData" type="text" placeholder="_,-,!..." />
@@ -75,8 +90,8 @@ onMounted(() => {
               Игнорируемые символы:
               <span
                 ><SettingsElementsListUi
-                  :loader="ignoredCharsStore.loader"
-                  :data="ignoredCharsStore.ignoredChars"
+                  :loader="pendingChars"
+                  :data="ignoredChars"
               /></span>
             </h3>
             <Input type="text" placeholder="&, P, +, %..." />
@@ -103,8 +118,8 @@ onMounted(() => {
         <h3 class="input-header">Список цветовых схем:</h3>
         <Input type="search" placeholder="Поиск" v-model="search" />
       </div>
-      <Skeleton v-if="tagsDirStore.loader" width="100%" height="100%" />
-      <ul v-else-if="tagsDirStore.getTagsDir" class="tag-list">
+      <Skeleton v-if="pendingTagsDir" width="100%" height="100%" />
+      <ul v-else-if="tagsDir" class="tag-list">
         <li class="tag-list-item" v-for="[key, value] in tagsEntries" :key="key">
           <span>{{ key }}</span>
           <span>{{ value }}</span>
