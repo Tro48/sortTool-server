@@ -1,17 +1,1 @@
-{
-	"foldersDir": "/Users/andrey/project/sortTool-server/backend/db",
-	"listenDir": "/Users/andrey/project/sortTool-server/backend/db",
-	"separators": [{ "id": "eba5798fb8e3c07332c722974a2a645b", "value": "0" }],
-	"ignoredChars": [],
-	"tagsDir": {
-		"test1": "test1 — копия",
-		"test1/2": "test1",
-		"test3": "test1 — копия",
-		"test": "test1 — копия 3",
-		"sdfsdfdsf": "test1 — копия 2",
-		"gfdfg": "test1 — копия 2",
-		"gfhgf": "test1 — копия 2",
-		"hfjhfgj": "test1 — копия 2",
-		"hjghj": "test1 — копия 2"
-	}
-}
+{"foldersDir":"/Users/andrey/project/sortTool-server/backend/db","listenDir":"/Users/andrey/project/sortTool-server/backend/db","separators":[],"ignoredChars":[],"tagsDir":{}}

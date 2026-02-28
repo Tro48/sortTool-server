@@ -3,10 +3,10 @@ import { computed, onMounted } from 'vue'
 import Skeleton from './Skeleton.vue'
 
 const props = defineProps<{
-  data: { id: number | string; value: string }[]
+  data: { id: string; value: string }[]
   loader?: boolean
   skeletonCount?: number
-  fethFunc?: ()=> void
+  delFunc: (id: string) => Promise<void>
 }>()
 
 const count = computed(() => props.skeletonCount ?? 3)
@@ -20,7 +20,7 @@ const count = computed(() => props.skeletonCount ?? 3)
     </template>
 
     <template v-else>
-      <li v-for="item in props.data" :key="item.id" class="data-item">
+      <li v-for="item in props.data" :key="item.id" @click="props.delFunc(item.id)" class="data-item">
         {{ item.value }}
       </li>
     </template>

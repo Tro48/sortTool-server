@@ -92,6 +92,7 @@ onMounted(() => {
 							Разделитель:
 							<span
 								><SettingsElementsListUi
+                :delFunc="settings.removeSeparatorItem"
 									:loader="pendingSep"
 									:data="separators"
 									:skeletonCount="separators.length"
@@ -119,6 +120,7 @@ onMounted(() => {
 							Игнорируемые символы:
 							<span
 								><SettingsElementsListUi
+                  :delFunc="settings.removeIgnoredItem"
 									:loader="pendingChars"
 									:data="ignoredChars"
 							/></span>
@@ -174,6 +176,8 @@ onMounted(() => {
 					<span>{{ key }}</span>
 					<span>{{ value }}</span>
 					<ButtonUi
+            type="button"
+            @click="settings.removeTagItem(key)"
 						customClass="delete-button"
 						tooltip="Удалить цветовую схему"
 					>
@@ -274,7 +278,6 @@ onMounted(() => {
 	align-items: center;
 	padding: 5px;
 	gap: 5px;
-	border-bottom: 1px solid var(--bg-color);
 }
 
 .tag-list {

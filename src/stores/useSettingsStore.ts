@@ -130,6 +130,57 @@ export const useSettings = defineStore('settingsStore', {
 				this.pendingTagsDir = false;
 			}
 		},
+    async removeTagItem(id: string) {
+			this.pendingTagsDir = true;
+			try {
+				const response = await fetch(apiUrl + 'tagsDir/delete/', {
+					method: 'DELETE',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ id }),
+				});
+				if (response.ok) {
+					this.fetchAllTagsDir();
+				}
+			} catch (error) {
+				console.error('Ошибка:', error);
+			} finally {
+				this.pendingTagsDir = false;
+			}
+		},
+    async removeIgnoredItem(id: string) {
+			this.pendingChars = true;
+			try {
+				const response = await fetch(apiUrl + 'ignoredChars/delete/', {
+					method: 'DELETE',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ id }),
+				});
+				if (response.ok) {
+					this.fetchIgnoredChars();
+				}
+			} catch (error) {
+				console.error('Ошибка:', error);
+			} finally {
+				this.pendingChars = false;
+			}
+		},
+    async removeSeparatorItem(id: string) {
+			this.pendingSep = true;
+			try {
+				const response = await fetch(apiUrl + 'separators/delete/', {
+					method: 'DELETE',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ id }),
+				});
+				if (response.ok) {
+					this.fetchSeparators();
+				}
+			} catch (error) {
+				console.error('Ошибка:', error);
+			} finally {
+				this.pendingSep = false;
+			}
+		},
 	},
 	getters: {
 		getFolders: (state) => {
