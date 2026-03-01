@@ -10,6 +10,18 @@ interface ISettingsState {
 	pendingTagsDir: boolean;
 	folders: string[];
 	pendingFolders: boolean;
+	isUploadSettings: boolean;
+	isDownloadSettings: boolean;
+	foldersDir: string;
+	listenDir: string;
+}
+
+export interface SettingsFileData {
+	foldersDir: string;
+	ignoredChars: { id: string; value: string }[];
+	separators: { id: string; value: string }[];
+	tagsDir: Record<string, string>;
+	listenDir: string;
 }
 
 export const useSettings = defineStore('settingsStore', {
@@ -22,6 +34,10 @@ export const useSettings = defineStore('settingsStore', {
 		pendingTagsDir: false,
 		folders: [],
 		pendingFolders: false,
+		isUploadSettings: false,
+		isDownloadSettings: false,
+		foldersDir: '',
+		listenDir: '',
 	}),
 	actions: {
 		async fetchIgnoredChars() {
@@ -85,10 +101,7 @@ export const useSettings = defineStore('settingsStore', {
 				const response = await fetch(apiUrl + 'tagsDir');
 				const data = await response.json();
 				this.tagsDir = new Map(
-					Object.entries(data).map(([key, value]) => [
-						key,
-						value as string,
-					]),
+					Object.entries(data).map(([key, value]) => [key, value as string]),
 				);
 			} catch (error) {
 				console.error('Ошибка:', error);
@@ -99,7 +112,12 @@ export const useSettings = defineStore('settingsStore', {
 		async fetchAllFolders() {
 			this.pendingFolders = true;
 			try {
-				this.folders = await (await fetch(apiUrl + 'folders')).json();
+				const response = await fetch(apiUrl + 'folders');
+				if (response.ok) {
+					this.folders = await response.json();
+				} else {
+					this.folders = [];
+				}
 			} catch (error) {
 				console.error('Ошибка:', error);
 			} finally {
@@ -130,7 +148,7 @@ export const useSettings = defineStore('settingsStore', {
 				this.pendingTagsDir = false;
 			}
 		},
-    async removeTagItem(id: string) {
+		async removeTagItem(id: string) {
 			this.pendingTagsDir = true;
 			try {
 				const response = await fetch(apiUrl + 'tagsDir/delete/', {
@@ -147,7 +165,7 @@ export const useSettings = defineStore('settingsStore', {
 				this.pendingTagsDir = false;
 			}
 		},
-    async removeIgnoredItem(id: string) {
+		async removeIgnoredItem(id: string) {
 			this.pendingChars = true;
 			try {
 				const response = await fetch(apiUrl + 'ignoredChars/delete/', {
@@ -164,7 +182,7 @@ export const useSettings = defineStore('settingsStore', {
 				this.pendingChars = false;
 			}
 		},
-    async removeSeparatorItem(id: string) {
+		async removeSeparatorItem(id: string) {
 			this.pendingSep = true;
 			try {
 				const response = await fetch(apiUrl + 'separators/delete/', {
@@ -181,6 +199,56 @@ export const useSettings = defineStore('settingsStore', {
 				this.pendingSep = false;
 			}
 		},
+		async fetchUploadSettings(data: SettingsFileData) {
+			this.isUploadSettings = true;
+			try {
+				const response = await fetch(apiUrl + 'settings/upload', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(data),
+				});
+				if (response.ok) {
+					const {
+						foldersDir,
+						ignoredChars,
+						separators,
+						tagsDir,
+						listenDir,
+					}: SettingsFileData = await response.json();
+					this.foldersDir = foldersDir;
+					this.ignoredChars = ignoredChars;
+					this.separators = separators;
+					this.tagsDir = new Map<string, string>();
+					Object.entries(tagsDir).forEach(([key, value]) => {
+						this.tagsDir.set(key, value);
+					});
+					this.listenDir = listenDir;
+				}
+			} catch (error) {
+				console.error('Ошибка:', error);
+			} finally {
+				this.isUploadSettings = false;
+			}
+		},
+    async fetchDownloadSettings() {
+      try {
+        const response = await fetch(apiUrl + 'settings/download', {method: "GET"});
+        if (!response.ok) {
+          throw new Error('Ошибка загрузки файла');
+        }
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'settings.json';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+      } catch (error) {
+        console.error('Ошибка:', error);
+      }
+    },
 	},
 	getters: {
 		getFolders: (state) => {

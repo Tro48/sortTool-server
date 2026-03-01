@@ -7,7 +7,6 @@ import { deleteSettings, getSettings, setSettings } from './methods.ts';
 dotenv.config();
 const app = express();
 const port = process.env.VITE_PORT;
-const foldersDir = process.env.FOLDERS_PATH;
 const settingsFileDir = 'backend/db/settings.json';
 const logsDir = 'backend/db/logs.json';
 
@@ -16,19 +15,28 @@ const settingsKeys = {
 	ignoredChars: 'ignoredChars',
 	tagsDir: 'tagsDir',
 	logs: 'logs',
+	foldersDir: 'foldersDir',
+	listenDir: 'listenDir',
 };
 
 app.use(express.static('dist'));
 app.use(cors());
 app.use(express.json());
 
-app.get('/api/folders', (req, res) => {
-	const dirPath = path.join(foldersDir ? foldersDir : '');
-	fs.readdir(dirPath, { withFileTypes: true }, (err, files) => {
-		if (err) return res.status(500).json({ error: 'ошибка чтения' });
-		const folders = files.filter((dirent) => dirent.isDirectory()).map((dirent) => dirent.name);
-		res.json(folders);
-	});
+app.get('/api/folders', (_, res) => {
+	const _settings = JSON.parse(fs.readFileSync(settingsFileDir, 'utf-8'));
+	if (!_settings.foldersDir) {
+		return res.status(500).json({ error: 'Путь к папкам не задан' });
+	} else {
+		const dirPath = path.join(_settings.foldersDir ? _settings.foldersDir : '');
+		fs.readdir(dirPath, { withFileTypes: true }, (err, files) => {
+			if (err) return res.status(500).json({ error: 'ошибка чтения' });
+			const folders = files
+				.filter((dirent) => dirent.isDirectory())
+				.map((dirent) => dirent.name);
+			res.json(folders);
+		});
+	}
 });
 app.get('/api/separators', (_, res) =>
 	getSettings({
@@ -101,6 +109,26 @@ app.delete('/api/ignoredChars/delete/', (req, res) =>
 		settingsFileDir,
 	}),
 );
+
+app.post('/api/settings/upload', (req, res) => {
+	const data = { ...req.body };
+	fs.writeFile(settingsFileDir, JSON.stringify(data), 'utf8', (err) => {
+		if (err) {
+			console.error('Ошибка записи файла:', err);
+			return res.status(500).json({ error: 'Ошибка записи файла' });
+		}
+		res.status(201).send(JSON.stringify(data));
+	});
+});
+
+app.get('/api/settings/download', (_, res) => {
+  res.download(settingsFileDir, 'settings.json', (err) => {
+    if (err) {
+      console.error('Ошибка отправки файла:', err);
+      res.status(500).json({ error: 'Ошибка отправки файла' });
+    }
+  });
+});
 
 app.listen(port, () => {
 	console.log(`Example app listening on port ${port}`);

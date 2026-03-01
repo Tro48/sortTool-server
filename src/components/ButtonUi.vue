@@ -28,6 +28,6 @@ const props = defineProps<{ customClass?: string; tooltip?: string;}>()
 }
 
 .button:active {
-  scale: 0.98;
+  scale: 0.9;
 }
 </style>

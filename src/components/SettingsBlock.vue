@@ -6,20 +6,11 @@ import ButtonUi from './ButtonUi.vue';
 import Input from './Input.vue';
 import InputFolders from './InputFolders.vue';
 import SettingsElementsListUi from './SettingsElementsListUi.vue';
-import Skeleton from './Skeleton.vue';
+import WorkingWithFiles from './WorkingWithFiles.vue';
 
 const settings = useSettings();
-const {
-	ignoredChars,
-	pendingChars,
-	separators,
-	pendingSep,
-	tagsDir,
-	pendingTagsDir,
-	folders,
-	pendingFolders,
-	getFolders,
-} = storeToRefs(settings);
+const { ignoredChars, pendingChars, separators, pendingSep, tagsDir, pendingTagsDir } =
+	storeToRefs(settings);
 
 const search = ref('');
 
@@ -42,21 +33,24 @@ const folderInputData = ref('');
 const tagInputData = ref('');
 
 const hendlerFormSeparator = () => {
+	if (!separatorData.value) return;
 	settings.fetchSetSeparator(separatorData.value);
 	separatorData.value = '';
 };
 
 const hendlerFormignoredChars = () => {
+	if (!ignoredCharsData.value) return;
 	settings.fetchSetIgnoredChars(ignoredCharsData.value);
 	ignoredCharsData.value = '';
 };
 
 const hendlerAddTags = () => {
-  const tags = tagInputData.value.replace(/\s+/g, '').split(',');
-  const data = new Map<string, string>();
-  tags.forEach(tag => {
-    data.set(tag, folderInputData.value);
-  });
+	if (!tagInputData.value || !folderInputData.value) return;
+	const tags = tagInputData.value.replace(/\s+/g, '').split(',');
+	const data = new Map<string, string>();
+	tags.forEach((tag) => {
+		data.set(tag, folderInputData.value);
+	});
 	settings.fetchSetTagsDir(data);
 	tagInputData.value = '';
 	folderInputData.value = '';
@@ -70,94 +64,59 @@ onMounted(() => {
 </script>
 <template>
 	<section class="settings-section">
-		<div class="settings-dw-block">
-			<ButtonUi
-				customClass="download-button"
-				tooltip="Загрузить настройки"
-				><v-icon>mdi-file-download-outline</v-icon></ButtonUi
-			>
-			<ButtonUi customClass="upload-button" tooltip="Сохранить настройки"
-				><v-icon>mdi-file-upload-outline</v-icon></ButtonUi
-			>
-		</div>
+		<WorkingWithFiles />
 		<div class="settings-blocks-container">
 			<div class="settings-block">
-				<form
-					@submit.prevent
-					@submit="hendlerFormSeparator"
-					class="form"
-				>
+				<form @submit.prevent @submit="hendlerFormSeparator" class="form">
 					<div class="input-group">
 						<h3 class="input-header">
 							Разделитель:
 							<span
 								><SettingsElementsListUi
-                :delFunc="settings.removeSeparatorItem"
+									:delFunc="settings.removeSeparatorItem"
 									:loader="pendingSep"
 									:data="separators"
 									:skeletonCount="separators.length"
 							/></span>
 						</h3>
-						<Input
-							v-model="separatorData"
-							type="text"
-							placeholder="_,-,!..."
-						/>
+						<Input v-model="separatorData" type="text" placeholder="_,-,!..." />
 					</div>
-					<ButtonUi type="submit"
-						><v-icon>mdi-plus-circle-outline</v-icon></ButtonUi
-					>
+					<ButtonUi type="submit"><v-icon>mdi-plus-circle-outline</v-icon></ButtonUi>
 				</form>
 			</div>
 			<div class="settings-block">
-				<form
-					class="form"
-					@submit="hendlerFormignoredChars"
-					@submit.prevent
-				>
+				<form class="form" @submit="hendlerFormignoredChars" @submit.prevent>
 					<div class="input-group">
 						<h3 class="input-header">
 							Игнорируемые символы:
 							<span
 								><SettingsElementsListUi
-                  :delFunc="settings.removeIgnoredItem"
+									:delFunc="settings.removeIgnoredItem"
 									:loader="pendingChars"
 									:data="ignoredChars"
 							/></span>
 						</h3>
-						<Input
-							type="text"
-							v-model="ignoredCharsData"
-							placeholder="&, P, +, %..."
-						/>
+						<Input type="text" v-model="ignoredCharsData" placeholder="&, P, +, %..." />
 					</div>
-					<ButtonUi type="submit"
-						><v-icon>mdi-plus-circle-outline</v-icon></ButtonUi
-					>
+					<ButtonUi type="submit"><v-icon>mdi-plus-circle-outline</v-icon></ButtonUi>
 				</form>
 			</div>
 			<div class="settings-block settings-block-tag">
 				<form class="form" @submit.prevent @submit="hendlerAddTags">
 					<div class="input-group">
-						<label class="input-header" for="tag-name"
-							>Цветовая схема:</label
-						>
+						<label class="input-header" for="tag-name">Цветовая схема:</label>
 						<Input
-            v-model="tagInputData"
+							v-model="tagInputData"
 							id="tag-name"
 							type="text"
 							placeholder="CMYK, BL2..."
 						/>
 					</div>
 					<div class="input-group">
-						<label class="input-header" for="tag-folder"
-							>Выбрать папку:</label
-						>
+						<label class="input-header" for="tag-folder">Выбрать папку:</label>
 						<InputFolders v-model="folderInputData" placeholder="Выберите папку" />
 					</div>
-					<ButtonUi type="submit"
-						><v-icon>mdi-tag-plus-outline</v-icon></ButtonUi
-					>
+					<ButtonUi type="submit"><v-icon>mdi-tag-plus-outline</v-icon></ButtonUi>
 				</form>
 			</div>
 		</div>
@@ -166,18 +125,14 @@ onMounted(() => {
 				<h3 class="input-header">Список цветовых схем:</h3>
 				<Input type="search" placeholder="Поиск" v-model="search" />
 			</div>
-			<Skeleton v-if="pendingTagsDir" width="100%" height="100%" />
+			<div v-if="tagsDir.size === 0" class="empty-message"><p>Тут пока ничего нет</p></div>
 			<ul v-else-if="tagsDir" class="tag-list">
-				<li
-					class="tag-list-item"
-					v-for="[key, value] in tagsEntries"
-					:key="key"
-				>
+				<li class="tag-list-item" v-for="[key, value] in tagsEntries" :key="key">
 					<span>{{ key }}</span>
 					<span>{{ value }}</span>
 					<ButtonUi
-            type="button"
-            @click="settings.removeTagItem(key)"
+						type="button"
+						@click="settings.removeTagItem(key)"
 						customClass="delete-button"
 						tooltip="Удалить цветовую схему"
 					>
@@ -199,25 +154,10 @@ onMounted(() => {
 	block-size: 100%;
 }
 
-.settings-dw-block {
-	display: flex;
-	justify-content: end;
-	align-items: center;
-	gap: 5px;
-	inline-size: 100%;
-	background-color: var(--bg-color-section);
-	border-radius: 5px;
-	box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-}
-
 .settings-blocks-container {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	gap: 5px;
-}
-
-.download-button,
-.upload-button {
 }
 
 .input-group {
@@ -241,6 +181,7 @@ onMounted(() => {
 	align-items: center;
 	gap: 5px;
 	inline-size: 100%;
+  min-block-size: 30px;
 	font-size: 16px;
 	font-weight: 600;
 }
@@ -278,6 +219,18 @@ onMounted(() => {
 	align-items: center;
 	padding: 5px;
 	gap: 5px;
+}
+
+.empty-message {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	inline-size: 100%;
+	block-size: 100%;
+	border: 1px solid var(--bg-color);
+	border-radius: 5px;
+	color: var(--text-color);
+	font-size: 14px;
 }
 
 .tag-list {
