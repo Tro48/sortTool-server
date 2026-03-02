@@ -3,12 +3,14 @@ import dotenv from 'dotenv';
 import express from 'express';
 import fs from 'fs';
 import path from 'path';
-import { deleteSettings, getSettings, setSettings } from './methods.ts';
+import { deleteSettings, getSettings, setSettings } from './methods';
+import { Checker } from '../backend/scripts/checkForNewFiles';
 dotenv.config();
 const app = express();
 const port = process.env.VITE_PORT;
 const settingsFileDir = 'backend/db/settings.json';
 const logsDir = 'backend/db/logs.json';
+const checkerFiles = new Checker();
 
 const settingsKeys = {
 	separators: 'separators',
@@ -122,12 +124,30 @@ app.post('/api/settings/upload', (req, res) => {
 });
 
 app.get('/api/settings/download', (_, res) => {
-  res.download(settingsFileDir, 'settings.json', (err) => {
-    if (err) {
-      console.error('Ошибка отправки файла:', err);
-      res.status(500).json({ error: 'Ошибка отправки файла' });
-    }
-  });
+	res.download(settingsFileDir, 'settings.json', (err) => {
+		if (err) {
+			console.error('Ошибка отправки файла:', err);
+			res.status(500).json({ error: 'Ошибка отправки файла' });
+		}
+	});
+});
+
+app.get('/api/playScript', (_, res) => {
+	try {
+		checkerFiles.play();
+		res.json({ message: 'Скрипт запущен...', success: true })
+	} catch (error) {
+		res.status(507).send(error);
+	}
+});
+
+app.get('/api/stopScript', (_, res) => {
+	try {
+		const message = checkerFiles.stop();
+		res.json({ message: 'Скрипт остановлен', success: true })
+	} catch (error) {
+		res.status(507).send(error);
+	}
 });
 
 app.listen(port, () => {

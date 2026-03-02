@@ -3,12 +3,6 @@ import ButtonUi from '@/components/ButtonUi.vue';
 import { useSettings, type SettingsFileData } from '@/stores/useSettingsStore';
 import { ref } from 'vue';
 
-const emit = defineEmits<{
-	(e: 'start'): void;
-	(e: 'success', data: any): void;
-	(e: 'error', err: unknown): void;
-}>();
-
 const settings = useSettings();
 
 const inputRef = ref<HTMLInputElement | null>(null);
