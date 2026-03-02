@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import ControlsBlock from './components/ControlsBlock.vue'
 import LogsBlock from './components/LogsBlock.vue'
 import SettingsBlock from './components/SettingsBlock.vue'
 import TabsPanel from './components/TabsPanel.vue'
@@ -8,7 +7,6 @@ import TabsPanel from './components/TabsPanel.vue'
 <template>
   <header class="header">
     <h1>SortTool Settings</h1>
-    <ControlsBlock></ControlsBlock>
   </header>
   <main class="main">
     <TabsPanel :names="['Настройки', 'Логи']" :panels="[SettingsBlock, LogsBlock]" />

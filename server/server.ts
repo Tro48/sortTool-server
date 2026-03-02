@@ -1,16 +1,44 @@
+import chokidar from 'chokidar';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
 import fs from 'fs';
 import path from 'path';
+import settings from '../backend/db/settings.json';
+import { copyFile } from '../backend/scripts/copyFile';
 import { deleteSettings, getSettings, setSettings } from './methods';
-import { Checker } from '../backend/scripts/checkForNewFiles';
+import { Server } from "socket.io";
+import http from 'http';
 dotenv.config();
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server, { cors: { origin: '*' } });
 const port = process.env.VITE_PORT;
 const settingsFileDir = 'backend/db/settings.json';
 const logsDir = 'backend/db/logs.json';
-const checkerFiles = new Checker();
+const checkerFolder = chokidar.watch(settings.listenDir, {
+	awaitWriteFinish: { stabilityThreshold: 2000, pollInterval: 100 },
+});
+
+try {
+	checkerFolder
+		.on('add', (filePath: string) =>
+			setTimeout(() => {
+				copyFile(filePath);
+			}, 500),
+		)
+		.on('change', (filePath: string) =>
+			setTimeout(() => {
+				copyFile(filePath);
+			}, 500),
+		)
+		.on('error', (err: unknown) => {
+			if (err instanceof Error) console.error(err.message);
+			else console.error(err);
+		});
+} catch (error) {
+	console.error('Ошибка при отслеживании папки:', error);
+}
 
 const settingsKeys = {
 	separators: 'separators',
@@ -24,6 +52,17 @@ const settingsKeys = {
 app.use(express.static('dist'));
 app.use(cors());
 app.use(express.json());
+
+const sendLog = (message:string) => {
+    const logEntry = { time: new Date().toLocaleTimeString(), message };
+    console.log(logEntry); // В консоль сервера
+    io.emit('log', logEntry); // Отправка на фронт
+};
+
+io.on('connection', (_socket) => {
+    console.log('Фронтенд подключился');
+    sendLog('Клиент подключился к сокету');
+});
 
 app.get('/api/folders', (_, res) => {
 	const _settings = JSON.parse(fs.readFileSync(settingsFileDir, 'utf-8'));
@@ -132,24 +171,6 @@ app.get('/api/settings/download', (_, res) => {
 	});
 });
 
-app.get('/api/playScript', (_, res) => {
-	try {
-		checkerFiles.play();
-		res.json({ message: 'Скрипт запущен...', success: true })
-	} catch (error) {
-		res.status(507).send(error);
-	}
-});
-
-app.get('/api/stopScript', (_, res) => {
-	try {
-		const message = checkerFiles.stop();
-		res.json({ message: 'Скрипт остановлен', success: true })
-	} catch (error) {
-		res.status(507).send(error);
-	}
-});
-
-app.listen(port, () => {
+server.listen(port, () => {
 	console.log(`Example app listening on port ${port}`);
 });

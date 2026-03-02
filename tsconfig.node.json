@@ -7,7 +7,8 @@
 		"nightwatch.conf.*",
 		"playwright.config.*",
 		"eslint.config.*",
-		"backend/**/*"
+		"backend/**/*",
+		"server/**/*"
 	],
 	"compilerOptions": {
 		"noEmit": true,

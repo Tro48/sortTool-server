@@ -232,36 +232,6 @@ export const useSettings = defineStore('settingsStore', {
 				this.isUploadSettings = false;
 			}
 		},
-		async fetchPlayScript() {
-			try {
-				const response = await fetch(apiUrl + 'playScript')
-				const message = await response.json()
-				if(response.ok) {
-					this.isStartScript = true
-					return message
-				}else {
-					this.isStartScript = false
-					return message
-				}
-			} catch (error) {
-				return `Ошибка запуска скрипта: ${error}`;
-			}
-		},
-		async fetchStopScript() {
-			try {
-				const response = await fetch(apiUrl + 'stopScript')
-				const message = await response.json()
-				if(response.ok) {
-					this.isStartScript = false
-					return message
-				}else {
-					this.isStartScript = true
-					return message
-				}
-			} catch (err) {
-				return `Ошибка остановки скрипта: ${err}`;
-			}
-		},
 		async fetchDownloadSettings() {
 			try {
 				const response = await fetch(apiUrl + 'settings/download', { method: 'GET' });

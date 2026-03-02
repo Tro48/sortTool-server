@@ -12,7 +12,7 @@ interface BaseProps {
 export const setSettings = ({ req, res, settingsType, settingsFileDir }: BaseProps) => {
 	const settingsItem = { ...req?.body };
 	if (!settingsItem) return res?.status(500).json({ error: 'Нет данных для добавления' });
-	let newSettingsItem = {};
+	let newSettingsItem: Record<string, unknown> = {};
 	let _keysSettingsItem: string[] = [];
 	if (settingsType === 'tagsDir') {
 		_keysSettingsItem = Object.keys(settingsItem);
@@ -82,11 +82,11 @@ export const deleteSettings = ({ req, res, settingsType, settingsFileDir }: Base
 			}
 			delete settings[settingsType][id];
 		} else {
-			if (!settings[settingsType].find((item) => item.id === id)) {
+			if (!settings[settingsType].find((item: Record<string, string>) => item.id === id)) {
 				res?.status(404).json({ error: 'Тег не найден' });
 				return;
 			}
-			settings[settingsType] = settings[settingsType].filter((item) => item.id !== id);
+			settings[settingsType] = settings[settingsType].filter((item: Record<string, string>) => item.id !== id);
 		}
 		fs.writeFile(settingsFileDir, JSON.stringify(settings), 'utf8', (err) => {
 			if (err) {

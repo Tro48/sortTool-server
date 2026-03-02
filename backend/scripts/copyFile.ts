@@ -73,6 +73,7 @@ import { calculateNewDir } from './calculateNewDir';
 
 export async function copyFile(path: string) {
 	const newFileDir = calculateNewDir(path);
+  console.log(newFileDir)
 	if (newFileDir) {
 		console.log('fileDir its ok');
 		try {
@@ -90,6 +91,7 @@ export async function copyFile(path: string) {
 					console.log(`delete ${path}`);
 				});
 			});
+		// oxlint-disable-next-line no-unused-vars
 		} catch (err) {
 			// console.log('ожидание...')
 			// console.error(err);
