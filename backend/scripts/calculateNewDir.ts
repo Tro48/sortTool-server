@@ -2,11 +2,10 @@ import { type SettingsFileData } from '../../src/stores/useSettingsStore';
 import settingsFile from '../db/settings.json';
 
 export const calculateNewDir = (dir: string): string => {
-  let newDir = '';
+	let newDir = '';
 	try {
 		const settings: SettingsFileData = settingsFile;
-		const fileName = dir.split('/').slice(-1)[0];
-            console.log(fileName)
+		const fileName = dir.split('\\').slice(-1)[0];
 		const separator = settings.separators.map((item) => item.value)[0];
 		const tags = Object.keys(settings.tagsDir);
 		if (!fileName) return '';
@@ -18,26 +17,23 @@ export const calculateNewDir = (dir: string): string => {
 		let tag;
 		if (arrTag.length === 1) {
 			tag = arrTag.join('');
-			newDir = (
-				settings.foldersDir + settings.tagsDir[tag] + '//' + fileName.replaceAll(' ', '_')
-			);
+			newDir =
+				settings.foldersDir + settings.tagsDir[tag] + '//' + fileName.replaceAll(' ', '_');
 		} else if (arrTag.length > 1) {
 			if (settings.tagsDir[arrTag.join('_')]) {
 				tag = arrTag.join('_');
-				newDir = (
+				newDir =
 					settings.foldersDir +
 					settings.tagsDir[tag] +
 					'//' +
-					fileName.replaceAll(' ', '_')
-				);
+					fileName.replaceAll(' ', '_');
 			} else {
 				tag = arrTag.reverse().join('_');
-				newDir = (
+				newDir =
 					settings.foldersDir +
 					settings.tagsDir[tag] +
 					'//' +
-					fileName.replaceAll(' ', '_')
-				);
+					fileName.replaceAll(' ', '_');
 			}
 		} else {
 			newDir = '';
@@ -45,5 +41,5 @@ export const calculateNewDir = (dir: string): string => {
 	} catch (error) {
 		console.error(error);
 	}
-  return newDir;
+	return newDir;
 };

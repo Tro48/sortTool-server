@@ -1,35 +1,38 @@
 <script setup lang="ts">
+import { storeToRefs } from 'pinia';
 import { io } from 'socket.io-client';
 import { nextTick, onMounted, ref, watch } from 'vue';
-import mockLogs from '../mockLogs.json';
+import { useLogs } from '../stores/useLogsStore';
 import LogItem from './LogItem.vue';
 const baseUrl = `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_PORT}/`;
 
-const logsList = ref<HTMLUListElement | null>(null);
+const logsListRef = ref<HTMLUListElement | null>(null);
 
 const socket = io(baseUrl, { autoConnect: true });
+const logs = useLogs();
+const { logsList } = storeToRefs(logs);
 
 async function scrollToBottom() {
 	await nextTick();
-	if (logsList.value) {
-		logsList.value.scrollTop = logsList.value.scrollHeight;
+	if (logsListRef.value) {
+		logsListRef.value.scrollTop = logsListRef.value.scrollHeight;
 	}
 }
 
 onMounted(() => {
+	logs.fetchGetAllLogs();
 	scrollToBottom();
 	socket.on('connect', () => {
 		console.log(`[Бэкенд]: Подключено`);
 		// Отобразить на странице
 	});
-  socket.on('log', (data) => {
-    console.log(`[Бэкенд]: ${data.time} - ${data.message}`);
-    // отображение на странице: нужно пушить в массив логов или обновлять стейт
-  })
+	socket.on('log', (data) => {
+		logs.setLogItem(data)
+	});
 });
 
 watch(
-	() => mockLogs.length,
+	() => logsListRef,
 	() => {
 		scrollToBottom();
 	},
@@ -42,11 +45,11 @@ watch(
 			<span class="log-state">Состояние</span>
 			<span class="log-message">Сообщение</span>
 		</h4>
-		<ul class="logs-list" ref="logsList">
+		<ul class="logs-list" ref="logsListRef">
 			<LogItem
-				v-for="value in mockLogs"
-				:key="value.name"
-				:name="value.name"
+				v-for="[key, value] in logsList"
+				:key="key"
+				:name="value.fileName"
 				:state="value.state"
 				:message="value.message"
 			/>

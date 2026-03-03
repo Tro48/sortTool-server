@@ -3,12 +3,12 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
 import fs from 'fs';
+import http from 'http';
 import path from 'path';
+import { Server } from 'socket.io';
 import settings from '../backend/db/settings.json';
 import { copyFile } from '../backend/scripts/copyFile';
 import { deleteSettings, getSettings, setSettings } from './methods';
-import { Server } from "socket.io";
-import http from 'http';
 dotenv.config();
 const app = express();
 const server = http.createServer(app);
@@ -20,16 +20,34 @@ const checkerFolder = chokidar.watch(settings.listenDir, {
 	awaitWriteFinish: { stabilityThreshold: 2000, pollInterval: 100 },
 });
 
+const getFileName = (dir: string) => dir.split('\\').slice(-1)[0];
+
+const messageStore = new Map();
+
+const sendLog = (message: string, state: 'pending' | 'pass' | 'error', fileName: string) => {
+	const date = new Date();
+	messageStore.set(fileName, {
+		fileName,
+		state,
+		message:
+		date.toLocaleDateString('ru-RU', {
+			hour: 'numeric',
+			minute: 'numeric',
+			second: 'numeric',
+			timeZoneName: 'short',
+		}) +
+		' ' +
+		message,
+	})
+	io.emit('log', messageStore.get(fileName)); // Отправка на фронт
+};
+
 try {
 	checkerFolder
-		.on('add', (filePath: string) =>
-			setTimeout(() => {
-				copyFile(filePath);
-			}, 500),
-		)
+		.on('add', (filePath: string) => copyFile(filePath, sendLog, getFileName(filePath), messageStore))
 		.on('change', (filePath: string) =>
 			setTimeout(() => {
-				copyFile(filePath);
+				copyFile(filePath, sendLog, getFileName(filePath), messageStore);
 			}, 500),
 		)
 		.on('error', (err: unknown) => {
@@ -53,15 +71,8 @@ app.use(express.static('dist'));
 app.use(cors());
 app.use(express.json());
 
-const sendLog = (message:string) => {
-    const logEntry = { time: new Date().toLocaleTimeString(), message };
-    console.log(logEntry); // В консоль сервера
-    io.emit('log', logEntry); // Отправка на фронт
-};
-
 io.on('connection', (_socket) => {
-    console.log('Фронтенд подключился');
-    sendLog('Клиент подключился к сокету');
+	console.log('Фронтенд подключился');
 });
 
 app.get('/api/folders', (_, res) => {
@@ -94,10 +105,13 @@ app.get('/api/ignoredChars', (_, res) =>
 	}),
 );
 app.get('/api/logs', (_, res) =>
-	getSettings({
-		res,
-		settingsType: settingsKeys.logs,
-		settingsFileDir: logsDir,
+	fs.readFile(logsDir, 'utf8', (err, data) => {
+		if (err) {
+			console.error(err);
+			res?.status(500).send('Ошибка чтения файла логов');
+			return;
+		}
+		res?.send(data);
 	}),
 );
 app.get('/api/tagsDir', (_, res) =>
