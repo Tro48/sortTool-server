@@ -20,11 +20,11 @@ const checkerFolder = chokidar.watch(settings.listenDir, {
 	awaitWriteFinish: { stabilityThreshold: 2000, pollInterval: 100 },
 });
 
-fs.writeFile(logsDir, JSON.stringify({}), 'utf8', (err) => {
-	if (err) {
-		console.error(err);
-	}
-});
+// fs.writeFile(logsDir, JSON.stringify({}), 'utf8', (err) => {
+// 	if (err) {
+// 		console.error(err);
+// 	}
+// });
 
 const getFileName = (dir: string) => dir.split('\\').slice(-1)[0];
 
@@ -90,10 +90,26 @@ app.get('/api/folders', (_, res) => {
 	} else {
 		const dirPath = path.join(_settings.foldersDir ? _settings.foldersDir : '');
 		fs.readdir(dirPath, { withFileTypes: true }, (err, files) => {
-			if (err) return res.status(500).json({ error: 'ошибка чтения' });
+			if (err) return res.status(500).json({ error: `ошибка чтения ${err}` });
 			const folders = files
 				.filter((dirent) => dirent.isDirectory())
-				.map((dirent) => dirent.name);
+				.map((dirent) => dirent.name)
+				.filter((dirName) => {
+					if (
+						dirName === '$cep_hf$' ||
+						dirName === 'error' ||
+						dirName === 'Exported' ||
+						dirName === 'Fonts' ||
+						dirName === 'indigo1' ||
+						dirName === 'indigo2' ||
+						dirName === 'JDF' ||
+						dirName === 'LabelsAndPackaging' ||
+						dirName === 'press' ||
+						dirName === 'success'
+					)
+						return false;
+					return dirName;
+				});
 			res.json(folders);
 		});
 	}
