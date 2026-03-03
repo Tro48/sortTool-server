@@ -20,6 +20,12 @@ const checkerFolder = chokidar.watch(settings.listenDir, {
 	awaitWriteFinish: { stabilityThreshold: 2000, pollInterval: 100 },
 });
 
+fs.writeFile(logsDir, JSON.stringify({}), 'utf8', (err) => {
+	if (err) {
+		console.error(err);
+	}
+});
+
 const getFileName = (dir: string) => dir.split('\\').slice(-1)[0];
 
 const messageStore = new Map();
@@ -30,21 +36,23 @@ const sendLog = (message: string, state: 'pending' | 'pass' | 'error', fileName:
 		fileName,
 		state,
 		message:
-		date.toLocaleDateString('ru-RU', {
-			hour: 'numeric',
-			minute: 'numeric',
-			second: 'numeric',
-			timeZoneName: 'short',
-		}) +
-		' ' +
-		message,
-	})
+			date.toLocaleDateString('ru-RU', {
+				hour: 'numeric',
+				minute: 'numeric',
+				second: 'numeric',
+				timeZoneName: 'short',
+			}) +
+			' ' +
+			message,
+	});
 	io.emit('log', messageStore.get(fileName)); // Отправка на фронт
 };
 
 try {
 	checkerFolder
-		.on('add', (filePath: string) => copyFile(filePath, sendLog, getFileName(filePath), messageStore))
+		.on('add', (filePath: string) =>
+			copyFile(filePath, sendLog, getFileName(filePath), messageStore),
+		)
 		.on('change', (filePath: string) =>
 			setTimeout(() => {
 				copyFile(filePath, sendLog, getFileName(filePath), messageStore);
