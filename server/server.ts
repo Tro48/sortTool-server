@@ -7,6 +7,7 @@ import http from 'http';
 import path from 'path';
 import { Server } from 'socket.io';
 import settings from '../backend/db/settings.json';
+import { delayedClear } from '../backend/scripts/clearLog';
 import { copyFile } from '../backend/scripts/copyFile';
 import { deleteSettings, getSettings, setSettings } from './methods';
 dotenv.config();
@@ -19,12 +20,8 @@ const logsDir = 'backend/db/logs.json';
 const checkerFolder = chokidar.watch(settings.listenDir, {
 	awaitWriteFinish: { stabilityThreshold: 2000, pollInterval: 100 },
 });
-
-// fs.writeFile(logsDir, JSON.stringify({}), 'utf8', (err) => {
-// 	if (err) {
-// 		console.error(err);
-// 	}
-// });
+const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
+delayedClear(logsDir, THREE_DAYS_MS);
 
 const getFileName = (dir: string) => dir.split('\\').slice(-1)[0];
 
