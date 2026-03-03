@@ -1,6 +1,8 @@
 import fs from 'fs';
+import os from 'os';
 import { calculateNewDir } from './calculateNewDir';
 const logsDir = 'backend/db/logs.json';
+const platform = os.platform();
 
 export async function copyFile(
 	path: string,
@@ -21,8 +23,8 @@ export async function copyFile(
 						console.error(err);
 						return;
 					}
-					const newFileDirArr = newFileDir.split('\\')
-					const folder = newFileDirArr[newFileDirArr.length - 2]
+					const newFileDirArr = newFileDir.split(platform === 'win32' ? '\\' : '/');
+					const folder = newFileDirArr[newFileDirArr.length - 2];
 					sendMessage(`Файл отправлен в папку ${folder}`, 'pass', fileName);
 					fs.readFile(logsDir, 'utf8', (err, data) => {
 						if (err) {

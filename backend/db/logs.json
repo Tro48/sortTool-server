@@ -1,1 +1,17 @@
-{}
+{
+	"CMYK_dfdf.rtf": {
+		"fileName": "CMYK_dfdf.rtf",
+		"state": "pass",
+		"message": "03.03.2026, 23:40:00 Файл отправлен в папку CMYK_PP"
+	},
+	"CMYK_df.rtf": {
+		"fileName": "CMYK_df.rtf",
+		"state": "pending",
+		"message": "03.03.2026, 23:40:43 Файл отправлен в папку CMYK_PP"
+	},
+	"CMYK_dsdsdf.rtf": {
+		"fileName": "CMYK_dsdsdf.rtf",
+		"state": "error",
+		"message": "03.03.2026, 23:51:21 Файл отправлен в папку CMYK_PP"
+	}
+}

@@ -4,12 +4,14 @@ import dotenv from 'dotenv';
 import express from 'express';
 import fs from 'fs';
 import http from 'http';
+import os from 'os';
 import path from 'path';
 import { Server } from 'socket.io';
 import settings from '../backend/db/settings.json';
 import { delayedClear } from '../backend/scripts/clearLog';
 import { copyFile } from '../backend/scripts/copyFile';
 import { deleteSettings, getSettings, setSettings } from './methods';
+const platform = os.platform();
 dotenv.config();
 const app = express();
 const server = http.createServer(app);
@@ -23,7 +25,7 @@ const checkerFolder = chokidar.watch(settings.listenDir, {
 const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
 delayedClear(logsDir, THREE_DAYS_MS);
 
-const getFileName = (dir: string) => dir.split('\\').slice(-1)[0];
+const getFileName = (dir: string) => dir.split(platform === 'win32' ? '\\' : '/').slice(-1)[0];
 
 const messageStore = new Map();
 

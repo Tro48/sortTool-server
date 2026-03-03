@@ -68,42 +68,42 @@ onMounted(() => {
 		<div class="settings-blocks-container">
 			<div class="settings-block">
 				<form @submit.prevent @submit="hendlerFormSeparator" class="form">
+					<h3 class="input-header">
+						Разделитель:
+						<span
+							><SettingsElementsListUi
+								:delFunc="settings.removeSeparatorItem"
+								:loader="pendingSep"
+								:data="separators"
+								:skeletonCount="separators.length"
+						/></span>
+					</h3>
 					<div class="input-group">
-						<h3 class="input-header">
-							Разделитель:
-							<span
-								><SettingsElementsListUi
-									:delFunc="settings.removeSeparatorItem"
-									:loader="pendingSep"
-									:data="separators"
-									:skeletonCount="separators.length"
-							/></span>
-						</h3>
 						<Input v-model="separatorData" type="text" placeholder="_,-,!..." />
+						<ButtonUi type="submit"><v-icon>mdi-plus-circle-outline</v-icon></ButtonUi>
 					</div>
-					<ButtonUi type="submit"><v-icon>mdi-plus-circle-outline</v-icon></ButtonUi>
 				</form>
 			</div>
 			<div class="settings-block">
 				<form class="form" @submit="hendlerFormignoredChars" @submit.prevent>
+					<h3 class="input-header">
+						Игнорируемые символы:
+						<span
+							><SettingsElementsListUi
+								:delFunc="settings.removeIgnoredItem"
+								:loader="pendingChars"
+								:data="ignoredChars"
+						/></span>
+					</h3>
 					<div class="input-group">
-						<h3 class="input-header">
-							Игнорируемые символы:
-							<span
-								><SettingsElementsListUi
-									:delFunc="settings.removeIgnoredItem"
-									:loader="pendingChars"
-									:data="ignoredChars"
-							/></span>
-						</h3>
 						<Input type="text" v-model="ignoredCharsData" placeholder="&, P, +, %..." />
+						<ButtonUi type="submit"><v-icon>mdi-plus-circle-outline</v-icon></ButtonUi>
 					</div>
-					<ButtonUi type="submit"><v-icon>mdi-plus-circle-outline</v-icon></ButtonUi>
 				</form>
 			</div>
 			<div class="settings-block settings-block-tag">
-				<form class="form" @submit.prevent @submit="hendlerAddTags">
-					<div class="input-group">
+				<form class="form form-tag" @submit.prevent @submit="hendlerAddTags">
+					<div class="input-group input-group-tag">
 						<label class="input-header" for="tag-name">Цветовая схема:</label>
 						<Input
 							v-model="tagInputData"
@@ -112,11 +112,13 @@ onMounted(() => {
 							placeholder="CMYK, BL2..."
 						/>
 					</div>
-					<div class="input-group">
+					<div class="input-group input-group-tag">
 						<label class="input-header" for="tag-folder">Выбрать папку:</label>
-						<InputFolders v-model="folderInputData" placeholder="Выберите папку" />
+						<div class="input-group-tag-button-block">
+							<InputFolders v-model="folderInputData" placeholder="Выберите папку" />
+							<ButtonUi type="submit"><v-icon>mdi-tag-plus-outline</v-icon></ButtonUi>
+						</div>
 					</div>
-					<ButtonUi type="submit"><v-icon>mdi-tag-plus-outline</v-icon></ButtonUi>
 				</form>
 			</div>
 		</div>
@@ -162,18 +164,34 @@ onMounted(() => {
 
 .input-group {
 	display: flex;
-	flex-direction: column;
-	align-items: start;
+	align-items: center;
 	justify-content: center;
 	inline-size: 100%;
 	gap: 5px;
 }
 
+.input-group-tag {
+	flex-direction: column;
+}
+
+.input-group-tag-button-block {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  justify-content: space-between;
+  inline-size: 100%;
+}
+
 .form {
 	display: flex;
+	flex-direction: column;
 	justify-content: space-between;
 	align-items: flex-end;
 	gap: 5px;
+}
+
+.form-tag {
+	flex-direction: row;
 }
 
 .input-header {
@@ -181,7 +199,7 @@ onMounted(() => {
 	align-items: center;
 	gap: 5px;
 	inline-size: 100%;
-  min-block-size: 30px;
+	min-block-size: 30px;
 	font-size: 16px;
 	font-weight: 600;
 }

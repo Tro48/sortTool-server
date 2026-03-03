@@ -54,28 +54,29 @@ watch(
 </template>
 <style scoped>
 .section-header {
-	display: flex;
+	display: grid;
+	grid-template-columns: 25% 15% 60%;
 	gap: 5px;
 	inline-size: 100%;
-	padding: 5px;
+	padding: 10px;
 	background-color: var(--bg-color-section);
 	box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 	border-radius: 5px;
 	font-size: 14px;
-}
-
-.section-header > span:not(:last-child) {
-	border-right: 1px solid var(--bg-color);
+	text-transform: uppercase;
 }
 
 .log-name {
-	inline-size: 25%;
+	border-right: 1px solid var(--bg-color);
 }
+
 .log-state {
-	inline-size: 15%;
+  justify-self: center;
+	border: none;
 }
 .log-message {
-	inline-size: 60%;
+	padding-left: 5px;
+	border-left: 1px solid var(--bg-color);
 }
 
 .section {

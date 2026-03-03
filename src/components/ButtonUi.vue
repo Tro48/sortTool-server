@@ -14,7 +14,6 @@ const props = defineProps<{ customClass?: string; tooltip?: string;}>()
 
 <style scoped>
 .button {
-  padding: 5px 5px;
   background-color: transparent;
   border-radius: 10px;
   cursor: pointer;

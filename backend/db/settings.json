@@ -1,6 +1,6 @@
 {
-	"foldersDir": "\\\\HPRIP1\\Jobs\\",
-	"listenDir": "\\\\HPRIP1\\Jobs\\indigo1\\",
+	"foldersDir": "//Users//andrey//Desktop//testRootFolders//",
+	"listenDir": "//Users//andrey//Desktop//testListener//",
 	"separators": [{ "id": "08afbd363673717432b23757dd702b49", "value": "_" }],
 	"ignoredChars": [],
 	"tagsDir": {

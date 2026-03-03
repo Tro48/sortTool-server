@@ -54,27 +54,17 @@ async function onChange(e: Event) {
 	</div>
 </template>
 
-<style scoped>
+<style>
 .settings-dw-block {
 	display: flex;
 	justify-content: end;
 	align-items: center;
 	gap: 5px;
 	inline-size: 100%;
+  padding: 5px;
 	background-color: var(--bg-color-section);
 	border-radius: 5px;
 	box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
 
-.visually-hidden {
-	position: absolute;
-	width: 1px;
-	height: 1px;
-	padding: 0;
-	margin: -1px;
-	overflow: hidden;
-	clip: rect(0 0 0 0);
-	white-space: nowrap;
-	border: 0;
-}
 </style>
