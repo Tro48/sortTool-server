@@ -40,7 +40,6 @@ const sendLog = (message: string, state: 'pending' | 'pass' | 'error', fileName:
 				hour: 'numeric',
 				minute: 'numeric',
 				second: 'numeric',
-				timeZoneName: 'short',
 			}) +
 			' ' +
 			message,

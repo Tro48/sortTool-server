@@ -9,7 +9,7 @@ import TabsPanel from './components/TabsPanel.vue'
     <h1>SortTool Settings</h1>
   </header>
   <main class="main">
-    <TabsPanel :names="['Настройки', 'Логи']" :panels="[SettingsBlock, LogsBlock]" />
+    <TabsPanel :names="['Логи', 'Настройки']" :panels="[LogsBlock, SettingsBlock]" />
   </main>
 </template>
 

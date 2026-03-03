@@ -22,12 +22,8 @@ async function scrollToBottom() {
 onMounted(() => {
 	logs.fetchGetAllLogs();
 	scrollToBottom();
-	socket.on('connect', () => {
-		console.log(`[Бэкенд]: Подключено`);
-		// Отобразить на странице
-	});
 	socket.on('log', (data) => {
-		logs.setLogItem(data)
+		logs.setLogItem(data);
 	});
 });
 

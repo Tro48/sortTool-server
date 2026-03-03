@@ -21,7 +21,9 @@ export async function copyFile(
 						console.error(err);
 						return;
 					}
-					sendMessage('Файл отправлен', 'pass', fileName);
+					const newFileDirArr = newFileDir.split('\\')
+					const folder = newFileDirArr[newFileDirArr.length - 2]
+					sendMessage(`Файл отправлен в папку ${folder}`, 'pass', fileName);
 					fs.readFile(logsDir, 'utf8', (err, data) => {
 						if (err) {
 							console.error(err);

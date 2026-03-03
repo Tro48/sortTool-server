@@ -13,27 +13,30 @@ export const calculateNewDir = (dir: string): string => {
 			.replace(/[.()\-— ,]/g, separator)
 			.toUpperCase()
 			.split(separator);
-		const arrTag = fileNameArr.filter((item) => tags.indexOf(item) >= 0);
+		const arrTag = fileNameArr.filter(part => 
+			tags.some(key => key.split(separator).includes(part))
+		  );
 		let tag;
 		if (arrTag.length === 1) {
-			tag = arrTag.join('');
+			tag = arrTag[0];
 			newDir =
-				settings.foldersDir + settings.tagsDir[tag] + '//' + fileName.replaceAll(' ', '_');
+				settings.foldersDir + settings.tagsDir[tag] + '\\' + fileName.replaceAll(' ', separator);
 		} else if (arrTag.length > 1) {
-			if (settings.tagsDir[arrTag.join('_')]) {
-				tag = arrTag.join('_');
+			tag = arrTag.join(separator);
+			if (settings.tagsDir[tag]) {
 				newDir =
 					settings.foldersDir +
 					settings.tagsDir[tag] +
-					'//' +
-					fileName.replaceAll(' ', '_');
+					'\\' +
+					fileName.replaceAll(' ', separator);
 			} else {
-				tag = arrTag.reverse().join('_');
+				tag = arrTag.reverse().join(separator);
+				console.log(tag)
 				newDir =
 					settings.foldersDir +
 					settings.tagsDir[tag] +
-					'//' +
-					fileName.replaceAll(' ', '_');
+					'\\' +
+					fileName.replaceAll(' ', separator);
 			}
 		} else {
 			newDir = '';
