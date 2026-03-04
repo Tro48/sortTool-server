@@ -139,13 +139,32 @@ app.get('/api/logs', (_, res) =>
 app.get('/api/tagsDir', (_, res) =>
 	getSettings({ res, settingsType: settingsKeys.tagsDir, settingsFileDir }),
 );
-app.post('/api/separators/set/', (req, res) =>
-	setSettings({
-		req,
-		res,
-		settingsType: settingsKeys.separators,
-		settingsFileDir,
-	}),
+app.post(
+	'/api/separators/set/',
+	(req, res) => {
+		const dataReq = {...req?.body};
+		fs.readFile(settingsFileDir, 'utf8', (err, data) => {
+			if (err) {
+				res?.status(500).send('Ошибка чтения файла настроек');
+				return;
+			}
+			const settings = JSON.parse(data);
+			settings.separators = dataReq.value;
+			fs.writeFile(settingsFileDir, JSON.stringify(settings), 'utf8', (err) => {
+				if (err) {
+					res?.status(501).send('Ошибка записи файла настроек');
+					return;
+				}
+				res?.status(201).send(JSON.stringify(dataReq.value));
+			});
+		});
+	},
+	// setSettings({
+	// 	req,
+	// 	res,
+	// 	settingsType: settingsKeys.separators,
+	// 	settingsFileDir,
+	// }),
 );
 app.post('/api/ignoredChars/set/', (req, res) =>
 	setSettings({
@@ -169,14 +188,25 @@ app.delete('/api/tagsDir/delete/', (req, res) =>
 	}),
 );
 
-app.delete('/api/separators/delete/', (req, res) =>
-	deleteSettings({
-		req,
-		res,
-		settingsType: settingsKeys.separators,
-		settingsFileDir,
-	}),
-);
+app.delete('/api/separators/delete/', (req, res) => {
+	const { id } = { ...req?.body };
+	if (!id) return res?.status(400).json({ error: 'Нет ID для удаления' });
+	fs.readFile(settingsFileDir, 'utf8', (err, data) => {
+		if (err) {
+			res?.status(500).send('Ошибка чтения файла настроек');
+			return;
+		}
+		const settings = JSON.parse(data);
+		settings.separators = '';
+		fs.writeFile(settingsFileDir, JSON.stringify(settings), 'utf8', (err) => {
+			if (err) {
+				res?.status(501).send('Ошибка записи файла настроек');
+				return;
+			}
+			res?.status(204).send();
+		});
+	});
+});
 
 app.delete('/api/ignoredChars/delete/', (req, res) =>
 	deleteSettings({

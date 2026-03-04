@@ -11,7 +11,7 @@ export const calculateNewDir = (dir: string): string => {
 		const settings: SettingsFileData = settingsFile;
 		const fileName = dir.split(separatorDir).slice(-1)[0];
 		if (fileName === '.DS_Store') return '';
-		const separator = settings.separators.map((item) => item.value)[0];
+		const separator = settings.separators;
 		const tags = Object.keys(settings.tagsDir);
 		if (!fileName) return '';
 		const fileNameArr = fileName

@@ -9,7 +9,11 @@ const props = defineProps<{
 	<li class="log-item">
 		<p class="log-name">{{ props.name }}</p>
 		<div v-if="props.state === 'pending'" class="log-state">
-			<v-progress-circular color="var(--active)" size="20" indeterminate></v-progress-circular>
+			<v-progress-circular
+				color="var(--active)"
+				size="20"
+				indeterminate
+			></v-progress-circular>
 		</div>
 		<div v-else-if="props.state === 'pass'" class="log-state">
 			<v-icon style="color: green">mdi-check-circle-outline</v-icon>
@@ -24,6 +28,7 @@ const props = defineProps<{
 .log-item {
 	display: grid;
 	grid-template-columns: 25% 15% 60%;
+	align-items: center;
 	gap: 5px;
 	padding: 5px;
 	inline-size: 100%;

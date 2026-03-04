@@ -45,6 +45,46 @@ export async function copyFile(
 			// oxlint-disable-next-line no-unused-vars
 		} catch (err) {
 			sendMessage(`Ошибка отправки: ${err}`, 'error', fileName);
+			fs.readFile(logsDir, 'utf8', (err, data) => {
+				if (err) {
+					console.error(err);
+					return;
+				}
+				const logsList = JSON.parse(data);
+				logsList[fileName] = messageStore.get(fileName);
+				fs.writeFile(logsDir, JSON.stringify(logsList), 'utf8', (err) => {
+					if (err) {
+						console.error(err);
+					}
+					messageStore.delete(fileName);
+				});
+			});
 		}
+	} else {
+		fs.unlink(path, (err) => {
+			if (err) {
+				console.error(err);
+				return;
+			}
+			sendMessage(
+				'В имени файла отсутствует цветовая схема для поиска. Измените имя файла и попробуйте снова',
+				'error',
+				fileName,
+			);
+			fs.readFile(logsDir, 'utf8', (err, data) => {
+				if (err) {
+					console.error(err);
+					return;
+				}
+				const logsList = JSON.parse(data);
+				logsList[fileName] = messageStore.get(fileName);
+				fs.writeFile(logsDir, JSON.stringify(logsList), 'utf8', (err) => {
+					if (err) {
+						console.error(err);
+					}
+					messageStore.delete(fileName);
+				});
+			});
+		});
 	}
 }

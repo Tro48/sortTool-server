@@ -20,7 +20,7 @@ interface ISettingsState {
 export interface SettingsFileData {
 	foldersDir: string;
 	ignoredChars: { id: string; value: string }[];
-	separators: { id: string; value: string }[];
+	separators: string;
 	tagsDir: Record<string, string>;
 	listenDir: string;
 }
@@ -58,7 +58,7 @@ export const useSettings = defineStore('settingsStore', {
 			try {
 				const response = await fetch(apiUrl + 'separators');
 				const data = await response.json();
-				this.separators = [...data];
+				this.separators = [{ id: data, value: data }];
 			} catch (error) {
 				console.error('Ошибка:', error);
 			} finally {
@@ -74,7 +74,7 @@ export const useSettings = defineStore('settingsStore', {
 					body: JSON.stringify({ value: sepData }),
 				});
 				const data = await response.json();
-				this.separators.push(data);
+				this.separators = [{ id: data, value: data }];
 			} catch (error) {
 				console.error('Ошибка:', error);
 			} finally {
@@ -219,7 +219,7 @@ export const useSettings = defineStore('settingsStore', {
 					}: SettingsFileData = await response.json();
 					this.foldersDir = foldersDir;
 					this.ignoredChars = ignoredChars;
-					this.separators = separators;
+					this.separators = [{ id: separators, value: separators }];
 					this.tagsDir = new Map<string, string>();
 					Object.entries(tagsDir).forEach(([key, value]) => {
 						this.tagsDir.set(key, value);

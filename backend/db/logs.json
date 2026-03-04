@@ -1,17 +1,1 @@
-{
-	"CMYK_dfdf.rtf": {
-		"fileName": "CMYK_dfdf.rtf",
-		"state": "pass",
-		"message": "03.03.2026, 23:40:00 Файл отправлен в папку CMYK_PP"
-	},
-	"CMYK_df.rtf": {
-		"fileName": "CMYK_df.rtf",
-		"state": "pending",
-		"message": "03.03.2026, 23:40:43 Файл отправлен в папку CMYK_PP"
-	},
-	"CMYK_dsdsdf.rtf": {
-		"fileName": "CMYK_dsdsdf.rtf",
-		"state": "error",
-		"message": "03.03.2026, 23:51:21 Файл отправлен в папку CMYK_PP"
-	}
-}
+{"62154_Contact 6CT-132L(4) 792126.pdf":{"fileName":"62154_Contact 6CT-132L(4) 792126.pdf","state":"error","message":"04.03.2026, 09:54:28 В имени файла отсутствует цветовая схема для поиска. Измените имя файла и попробуйте снова"},"26851(3x3)(Ind).pdf":{"fileName":"26851(3x3)(Ind).pdf","state":"error","message":"04.03.2026, 09:56:54 В имени файла отсутствует цветовая схема для поиска. Измените имя файла и попробуйте снова"},"50878_CMYKV.pdf":{"fileName":"50878_CMYKV.pdf","state":"pass","message":"04.03.2026, 10:16:41 Файл отправлен в папку CMYKV_PP"},"46720_CMY.pdf":{"fileName":"46720_CMY.pdf","state":"pass","message":"04.03.2026, 10:20:00 Файл отправлен в папку CMY_PP"},"47558_CMY.pdf":{"fileName":"47558_CMY.pdf","state":"pass","message":"04.03.2026, 10:20:17 Файл отправлен в папку CMY_PP"},"33650_CMY.pdf":{"fileName":"33650_CMY.pdf","state":"pass","message":"04.03.2026, 10:20:31 Файл отправлен в папку CMY_PP"},"51770_CMY.pdf":{"fileName":"51770_CMY.pdf","state":"pass","message":"04.03.2026, 10:24:24 Файл отправлен в папку CMY_PP"},"79254_CMY_3D_met.pdf":{"fileName":"79254_CMY_3D_met.pdf","state":"pass","message":"04.03.2026, 10:28:02 Файл отправлен в папку CMY_MET"},"23350_23351_70502_80907_80908_CMY.pdf":{"fileName":"23350_23351_70502_80907_80908_CMY.pdf","state":"pass","message":"04.03.2026, 11:34:35 Файл отправлен в папку CMY_PP"},"23353_45470_CMY.pdf":{"fileName":"23353_45470_CMY.pdf","state":"pass","message":"04.03.2026, 11:34:22 Файл отправлен в папку CMY_PP"},"55734_CMY.pdf":{"fileName":"55734_CMY.pdf","state":"pass","message":"04.03.2026, 11:49:12 Файл отправлен в папку CMY_PP"},"57736_CMYK(star).pdf":{"fileName":"57736_CMYK(star).pdf","state":"pass","message":"04.03.2026, 11:53:41 Файл отправлен в папку CMYK_PP"},"57316_CMYK.pdf":{"fileName":"57316_CMYK.pdf","state":"pass","message":"04.03.2026, 11:54:06 Файл отправлен в папку CMYK_PP"},"57317_CMYK.pdf":{"fileName":"57317_CMYK.pdf","state":"pass","message":"04.03.2026, 11:54:17 Файл отправлен в папку CMYK_PP"},"57737_CMYK.pdf":{"fileName":"57737_CMYK.pdf","state":"pass","message":"04.03.2026, 11:54:26 Файл отправлен в папку CMYK_PP"},"62544_CMYK.pdf":{"fileName":"62544_CMYK.pdf","state":"pass","message":"04.03.2026, 11:54:47 Файл отправлен в папку CMYK_PP"}}

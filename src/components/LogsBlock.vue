@@ -71,7 +71,7 @@ watch(
 }
 
 .log-state {
-  justify-self: center;
+	justify-self: center;
 	border: none;
 }
 .log-message {
