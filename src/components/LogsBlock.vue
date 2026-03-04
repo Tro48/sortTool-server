@@ -41,7 +41,8 @@ watch(
 			<span class="log-state">Состояние</span>
 			<span class="log-message">Сообщение</span>
 		</h4>
-		<ul class="logs-list" ref="logsListRef">
+		<div class="logs-list-container">
+			<ul class="logs-list" ref="logsListRef">
 			<LogItem
 				v-for="[key, value] in logsList"
 				:key="key"
@@ -50,6 +51,8 @@ watch(
 				:message="value.message"
 			/>
 		</ul>
+		</div>
+		
 	</section>
 </template>
 <style scoped>
@@ -89,6 +92,16 @@ watch(
 	block-size: 100%;
 }
 
+.logs-list-container {
+	inline-size: 100%;
+	block-size: 100%;
+	padding: 5px;
+	border-radius: 5px;
+	background-color: var(--bg-color-section);
+	box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+	overflow-y: hidden;
+}
+
 .logs-list {
 	display: flex;
 	flex-direction: column;
@@ -96,8 +109,6 @@ watch(
 	inline-size: 100%;
 	block-size: 100%;
 	padding: 5px;
-	background-color: var(--bg-color-section);
-	box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 	border-radius: 5px;
 	overflow-y: auto;
 	scroll-behavior: smooth;

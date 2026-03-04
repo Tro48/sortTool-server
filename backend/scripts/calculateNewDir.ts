@@ -9,13 +9,15 @@ export const calculateNewDir = (dir: string): string => {
 	let newDir = '';
 	try {
 		const settings: SettingsFileData = settingsFile;
+		const ignoredCharData = settings.ignoredChars.map(data => data.value).join('')
+		const pattern = new RegExp(`[${ignoredCharData}]+`, 'g');
 		const fileName = dir.split(separatorDir).slice(-1)[0];
 		if (fileName === '.DS_Store') return '';
 		const separator = settings.separators;
 		const tags = Object.keys(settings.tagsDir);
 		if (!fileName) return '';
 		const fileNameArr = fileName
-			.replace(/[.()\-— ,]/g, separator)
+			.replace(pattern, separator)
 			.toUpperCase()
 			.split(separator);
 		const arrTag = fileNameArr.filter((part) =>
