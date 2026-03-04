@@ -23,6 +23,7 @@ const props = defineProps<{ customClass?: string; tooltip?: string;}>()
 
 .button:hover {
   opacity: 0.9;
+  color: var(--active);
   transition: 0.3s;
 }
 
