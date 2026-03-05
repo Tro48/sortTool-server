@@ -6,7 +6,11 @@ const platform = os.platform();
 
 export async function copyFile(
 	path: string,
-	sendMessage: (message: string, state: 'pending' | 'pass' | 'error', fileName: string) => void,
+	sendMessage: (
+		message: string,
+		state: 'pending' | 'pass' | 'error' | 'globalError',
+		fileName: string,
+	) => void,
 	fileName: string,
 	messageStore: Map<string, { fileName: string; state: string; message: string }>,
 ) {
@@ -21,6 +25,7 @@ export async function copyFile(
 				fs.unlink(path, (err) => {
 					if (err) {
 						console.error(err);
+						sendMessage(`Ошибка удаления ${err}`, 'globalError', fileName);
 						return;
 					}
 					const newFileDirArr = newFileDir.split(platform === 'win32' ? '\\' : '/');
@@ -29,6 +34,7 @@ export async function copyFile(
 					fs.readFile(logsDir, 'utf8', (err, data) => {
 						if (err) {
 							console.error(err);
+							sendMessage(`Ошибка чтения ${err}`, 'globalError', fileName);
 							return;
 						}
 						const logsList = JSON.parse(data);
@@ -36,6 +42,7 @@ export async function copyFile(
 						fs.writeFile(logsDir, JSON.stringify(logsList), 'utf8', (err) => {
 							if (err) {
 								console.error(err);
+								sendMessage(`Ошибка записи файла ${err}`, 'globalError', fileName);
 							}
 							messageStore.delete(fileName);
 						});
@@ -48,6 +55,7 @@ export async function copyFile(
 			fs.readFile(logsDir, 'utf8', (err, data) => {
 				if (err) {
 					console.error(err);
+					sendMessage(`Ошибка чтения файла ${err}`, 'globalError', fileName);
 					return;
 				}
 				const logsList = JSON.parse(data);
@@ -55,6 +63,7 @@ export async function copyFile(
 				fs.writeFile(logsDir, JSON.stringify(logsList), 'utf8', (err) => {
 					if (err) {
 						console.error(err);
+						sendMessage(`Ошибка записи файла ${err}`, 'globalError', fileName);
 					}
 					messageStore.delete(fileName);
 				});
@@ -64,6 +73,7 @@ export async function copyFile(
 		fs.unlink(path, (err) => {
 			if (err) {
 				console.error(err);
+				sendMessage(`Ошибка удаления файла ${err}`, 'globalError', fileName);
 				return;
 			}
 			sendMessage(
@@ -74,6 +84,7 @@ export async function copyFile(
 			fs.readFile(logsDir, 'utf8', (err, data) => {
 				if (err) {
 					console.error(err);
+					sendMessage(`Ошибка чтения файла ${err}`, 'globalError', fileName);
 					return;
 				}
 				const logsList = JSON.parse(data);
@@ -81,6 +92,7 @@ export async function copyFile(
 				fs.writeFile(logsDir, JSON.stringify(logsList), 'utf8', (err) => {
 					if (err) {
 						console.error(err);
+						sendMessage(`Ошибка записи файла ${err}`, 'globalError', fileName);
 					}
 					messageStore.delete(fileName);
 				});

@@ -3,23 +3,22 @@ import { type SettingsFileData } from '../../src/stores/useSettingsStore';
 import settingsFile from '../db/settings.json';
 
 const platform = os.platform();
+const escapeRegExp = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 export const calculateNewDir = (dir: string): string => {
 	const separatorDir = platform === 'win32' ? '\\' : '/';
 	let newDir = '';
 	try {
 		const settings: SettingsFileData = settingsFile;
-		const ignoredCharData = settings.ignoredChars.map(data => data.value).join('')
-		const pattern = new RegExp(`[${ignoredCharData}]+`, 'g');
+
+		const ignoredCharData = settings.ignoredChars.map((data) => escapeRegExp(data.value)).join('');
+		const pattern = new RegExp(`[- \\${ignoredCharData}]`, 'g');
 		const fileName = dir.split(separatorDir).slice(-1)[0];
 		if (fileName === '.DS_Store') return '';
 		const separator = settings.separators;
 		const tags = Object.keys(settings.tagsDir);
 		if (!fileName) return '';
-		const fileNameArr = fileName
-			.replace(pattern, separator)
-			.toUpperCase()
-			.split(separator);
+		const fileNameArr = fileName.replace(pattern, separator).toUpperCase().split(separator);
 		const arrTag = fileNameArr.filter((part) =>
 			tags.some((key) => key.split(separator).includes(part)),
 		);

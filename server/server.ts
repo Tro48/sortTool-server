@@ -29,21 +29,29 @@ const getFileName = (dir: string) => dir.split(platform === 'win32' ? '\\' : '/'
 
 const messageStore = new Map();
 
-const sendLog = (message: string, state: 'pending' | 'pass' | 'error', fileName: string) => {
+const sendLog = (
+	message: string,
+	state: 'pending' | 'pass' | 'error' | 'globalError',
+	fileName: string,
+) => {
 	const date = new Date();
-	messageStore.set(fileName, {
-		fileName,
-		state,
-		message:
-			date.toLocaleDateString('ru-RU', {
-				hour: 'numeric',
-				minute: 'numeric',
-				second: 'numeric',
-			}) +
-			' ' +
-			message,
-	});
-	io.emit('log', messageStore.get(fileName)); // Отправка на фронт
+	if (state === 'globalError') {
+		io.emit('error', message)
+	} else {
+		messageStore.set(fileName, {
+			fileName,
+			state,
+			message:
+				date.toLocaleDateString('ru-RU', {
+					hour: 'numeric',
+					minute: 'numeric',
+					second: 'numeric',
+				}) +
+				' ' +
+				message,
+		});
+		io.emit('log', messageStore.get(fileName)); // Отправка на фронт
+	}
 };
 
 try {
@@ -139,33 +147,24 @@ app.get('/api/logs', (_, res) =>
 app.get('/api/tagsDir', (_, res) =>
 	getSettings({ res, settingsType: settingsKeys.tagsDir, settingsFileDir }),
 );
-app.post(
-	'/api/separators/set/',
-	(req, res) => {
-		const dataReq = {...req?.body};
-		fs.readFile(settingsFileDir, 'utf8', (err, data) => {
+app.post('/api/separators/set/', (req, res) => {
+	const dataReq = { ...req?.body };
+	fs.readFile(settingsFileDir, 'utf8', (err, data) => {
+		if (err) {
+			res?.status(500).send('Ошибка чтения файла настроек');
+			return;
+		}
+		const settings = JSON.parse(data);
+		settings.separators = dataReq.value;
+		fs.writeFile(settingsFileDir, JSON.stringify(settings), 'utf8', (err) => {
 			if (err) {
-				res?.status(500).send('Ошибка чтения файла настроек');
+				res?.status(501).send('Ошибка записи файла настроек');
 				return;
 			}
-			const settings = JSON.parse(data);
-			settings.separators = dataReq.value;
-			fs.writeFile(settingsFileDir, JSON.stringify(settings), 'utf8', (err) => {
-				if (err) {
-					res?.status(501).send('Ошибка записи файла настроек');
-					return;
-				}
-				res?.status(201).send(JSON.stringify(dataReq.value));
-			});
+			res?.status(201).send(JSON.stringify(dataReq.value));
 		});
-	},
-	// setSettings({
-	// 	req,
-	// 	res,
-	// 	settingsType: settingsKeys.separators,
-	// 	settingsFileDir,
-	// }),
-);
+	});
+});
 app.post('/api/ignoredChars/set/', (req, res) =>
 	setSettings({
 		req,
