@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useSettings } from '@/stores/useSettingsStore';
 import { storeToRefs } from 'pinia';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, type Ref } from 'vue';
 import ButtonUi from './ButtonUi.vue';
 import Input from './Input.vue';
 import InputFolders from './InputFolders.vue';
@@ -28,14 +28,41 @@ const tagsEntries = computed(() => {
 });
 
 const separatorData = ref('');
+const separatorDataInputErr = ref('');
 const ignoredCharsData = ref('');
+const ignoredCharsDataErr = ref('');
 const folderInputData = ref('');
 const tagInputData = ref('');
+
+const validateInput = (
+	value: string,
+	valueState: Ref<string, string>,
+	errorState: Ref<string, string>,
+): void => {
+	const char = value ? value.slice(-1) : '';
+	const forbiddenRegex = /[a-zA-Zа-яА-Я0-9]|\-||\\/;
+
+	if (forbiddenRegex.test(char) && char !== '') {
+		errorState.value = 'Разрешены только символы, кроме букв, цифр и знаков "- * \\"';
+		valueState.value = char;
+	} else {
+		errorState.value = '';
+		valueState.value = char;
+	}
+};
 
 const hendlerFormSeparator = () => {
 	if (!separatorData.value) return;
 	settings.fetchSetSeparator(separatorData.value);
 	separatorData.value = '';
+};
+
+const onInputCharsData = (value: string) => {
+	validateInput(value, ignoredCharsData, ignoredCharsDataErr);
+};
+
+const onInputSeparatorData = (value: string) => {
+	validateInput(value, separatorData, separatorDataInputErr);
 };
 
 const hendlerFormignoredChars = () => {
@@ -79,7 +106,14 @@ onMounted(() => {
 						/></span>
 					</h3>
 					<div class="input-group">
-						<Input v-model="separatorData" type="text" placeholder="_,-,!..." />
+						<Input
+							v-model="separatorData"
+							@input="onInputSeparatorData"
+							type="text"
+							placeholder="_,-,!..."
+							maxlength="1"
+							:errorData="separatorDataInputErr"
+						/>
 						<ButtonUi type="submit"><v-icon>mdi-plus-circle-outline</v-icon></ButtonUi>
 					</div>
 				</form>
@@ -96,7 +130,14 @@ onMounted(() => {
 						/></span>
 					</h3>
 					<div class="input-group">
-						<Input type="text" v-model="ignoredCharsData" placeholder="&, P, +, %..." />
+						<Input
+							type="text"
+							@input="onInputCharsData"
+							v-model="ignoredCharsData"
+							placeholder="&, P, +, %..."
+							maxlength="1"
+							:errorData="ignoredCharsDataErr"
+						/>
 						<ButtonUi type="submit"><v-icon>mdi-plus-circle-outline</v-icon></ButtonUi>
 					</div>
 				</form>
@@ -175,11 +216,11 @@ onMounted(() => {
 }
 
 .input-group-tag-button-block {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  justify-content: space-between;
-  inline-size: 100%;
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	justify-content: space-between;
+	inline-size: 100%;
 }
 
 .form {
@@ -209,7 +250,7 @@ onMounted(() => {
 	flex-direction: column;
 	gap: 5px;
 	inline-size: 100%;
-	padding: 10px;
+	padding: 10px 10px 30px 10px;
 	border: 1px solid var(--bg-color);
 	box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 	border-radius: 5px;
