@@ -42,7 +42,7 @@ watch(
 			<span class="log-message">Сообщение</span>
 		</h4>
 		<div class="logs-list-container">
-			<ul class="logs-list" ref="logsListRef">
+			<ul v-if="logsList.size > 0" class="logs-list" ref="logsListRef">
 				<LogItem
 					v-for="[key, value] in logsList"
 					:key="key"
@@ -51,6 +51,7 @@ watch(
 					:message="value.message"
 				/>
 			</ul>
+			<div v-else class="empty-message"><p>Логи отсутствуют</p></div>
 		</div>
 	</section>
 </template>
@@ -66,6 +67,18 @@ watch(
 	border-radius: 5px;
 	font-size: 14px;
 	text-transform: uppercase;
+}
+
+.empty-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  inline-size: 100%;
+  block-size: 100%;
+  font-size: 18px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-color-secondary);
 }
 
 .log-name {

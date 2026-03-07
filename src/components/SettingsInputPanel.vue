@@ -136,13 +136,6 @@ onMounted(() => {
 	</SettingsPanelContainerUi>
 </template>
 <style scoped>
-.form {
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-	align-items: flex-end;
-	gap: 5px;
-}
 
 .input-header {
 	display: flex;
