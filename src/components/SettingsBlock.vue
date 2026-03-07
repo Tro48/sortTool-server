@@ -40,10 +40,15 @@ const validateInput = (
 	errorState: Ref<string, string>,
 ): void => {
 	const char = value ? value.slice(-1) : '';
-	const forbiddenRegex = /[a-zA-Zа-яА-Я0-9]|\-||\\/;
+	const forbiddenRegex = /[a-zA-Zа-яА-Я0-9]/;
 
-	if (forbiddenRegex.test(char) && char !== '') {
-		errorState.value = 'Разрешены только символы, кроме букв, цифр и знаков "- * \\"';
+	if (
+		(forbiddenRegex.test(char) && char !== '') ||
+		char === '-' ||
+		char === '*' ||
+		char === '\\'
+	) {
+		errorState.value = 'Разрешены только символы, кроме букв, цифр и знаков - * \\';
 		valueState.value = char;
 	} else {
 		errorState.value = '';
@@ -110,11 +115,13 @@ onMounted(() => {
 							v-model="separatorData"
 							@input="onInputSeparatorData"
 							type="text"
-							placeholder="_,-,!..."
+							placeholder="Введите разделитель"
 							maxlength="1"
 							:errorData="separatorDataInputErr"
 						/>
-						<ButtonUi type="submit"><v-icon>mdi-plus-circle-outline</v-icon></ButtonUi>
+						<ButtonUi :disabled="!separatorData || separatorDataInputErr.length > 0" type="submit"
+							><v-icon>mdi-plus-circle-outline</v-icon></ButtonUi
+						>
 					</div>
 				</form>
 			</div>
@@ -134,11 +141,13 @@ onMounted(() => {
 							type="text"
 							@input="onInputCharsData"
 							v-model="ignoredCharsData"
-							placeholder="&, P, +, %..."
+							placeholder="Введите игнорируемый символ"
 							maxlength="1"
 							:errorData="ignoredCharsDataErr"
 						/>
-						<ButtonUi type="submit"><v-icon>mdi-plus-circle-outline</v-icon></ButtonUi>
+						<ButtonUi :disabled="!ignoredCharsData || ignoredCharsDataErr.length > 0" type="submit"
+							><v-icon>mdi-plus-circle-outline</v-icon></ButtonUi
+						>
 					</div>
 				</form>
 			</div>

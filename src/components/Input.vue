@@ -29,7 +29,7 @@ function onInput(e: Event) {
 			:placeholder="placeholder"
 			:value="modelValue"
 			@input="onInput"
-			class="input"
+			:class="['input', { 'input-error': errorData }]"
 			maxlength="maxlength"
 		/>
 		<p class="input-error-message" v-if="errorData">{{ errorData }}</p>
@@ -55,6 +55,10 @@ function onInput(e: Event) {
 
 .input:focus {
 	outline: 1px solid var(--text-color);
+}
+
+.input-error:focus {
+	outline: 1px solid red;
 }
 
 .input-error-message {

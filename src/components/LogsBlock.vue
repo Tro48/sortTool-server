@@ -43,16 +43,15 @@ watch(
 		</h4>
 		<div class="logs-list-container">
 			<ul class="logs-list" ref="logsListRef">
-			<LogItem
-				v-for="[key, value] in logsList"
-				:key="key"
-				:name="value.fileName"
-				:state="value.state"
-				:message="value.message"
-			/>
-		</ul>
+				<LogItem
+					v-for="[key, value] in logsList"
+					:key="key"
+					:name="value.fileName"
+					:state="value.state"
+					:message="value.message"
+				/>
+			</ul>
 		</div>
-		
 	</section>
 </template>
 <style scoped>
