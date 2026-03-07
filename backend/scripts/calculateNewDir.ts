@@ -1,5 +1,5 @@
 import os from 'os';
-import { type SettingsFileData } from '../../src/stores/useSettingsStore';
+import { type SettingsFileData } from '../../src/types/types';
 import settingsFile from '../db/settings.json';
 
 const platform = os.platform();

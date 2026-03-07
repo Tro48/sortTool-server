@@ -1,15 +1,8 @@
+import type { UseLogs, ILogItem } from '@/types/types';
 import { defineStore } from 'pinia';
 const apiUrl = `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_PORT}/api/`;
 
-interface ILogItem {
-	fileName: string;
-	state: 'pending' | 'pass' | 'error';
-	message: string;
-}
 
-interface UseLogs {
-	logsList: Map<string, ILogItem>;
-}
 
 export const useLogs = defineStore('logs', {
 	state: (): UseLogs => ({

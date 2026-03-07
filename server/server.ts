@@ -11,6 +11,7 @@ import settings from '../backend/db/settings.json';
 import { delayedClear } from '../backend/scripts/clearLog';
 import { copyFile } from '../backend/scripts/copyFile';
 import { deleteSettings, getSettings, setSettings } from './methods';
+import { getDb } from './getDb';
 const platform = os.platform();
 dotenv.config();
 const app = express();
@@ -28,6 +29,13 @@ delayedClear(logsDir, THREE_DAYS_MS);
 const getFileName = (dir: string) => dir.split(platform === 'win32' ? '\\' : '/').slice(-1)[0];
 
 const messageStore = new Map();
+
+const { settingsData, logsData } = getDb({
+	settingsDir: settingsFileDir,
+	logsDir,
+});
+
+console.log(settingsData, logsData);
 
 const sendLog = (
 	message: string,

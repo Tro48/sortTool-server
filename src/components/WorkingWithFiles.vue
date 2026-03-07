@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ButtonUi from '@/components/ButtonUi.vue';
-import { useSettings, type SettingsFileData } from '@/stores/useSettingsStore';
+import { useSettings } from '@/stores/useSettingsStore';
+import { type SettingsFileData } from '@/types/types';
 import { ref } from 'vue';
 
 const settings = useSettings();

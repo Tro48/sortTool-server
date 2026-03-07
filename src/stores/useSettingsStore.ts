@@ -1,3 +1,4 @@
+import type { SettingsFileData } from '@/types/types';
 import { defineStore } from 'pinia';
 const apiUrl = `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_PORT}/api/`;
 
@@ -15,14 +16,6 @@ interface ISettingsState {
 	foldersDir: string;
 	listenDir: string;
 	isStartScript: boolean;
-}
-
-export interface SettingsFileData {
-	foldersDir: string;
-	ignoredChars: { id: string; value: string }[];
-	separators: string;
-	tagsDir: Record<string, string>;
-	listenDir: string;
 }
 
 export const useSettings = defineStore('settingsStore', {
