@@ -239,3 +239,85 @@ app.get('/api/settings/download', (_, res) => {
 server.listen(port, () => {
 	console.log(`Example app listening on port ${port}`);
 });
+
+
+// Грейсфул-шаутдаун
+const FORCE_EXIT_TIMEOUT = 10000; // ms
+
+const gracefulShutdown = async (reason: string) => {
+    try {
+        console.log(`Shutting down: ${reason}`);
+
+        // 1) Остановить watcher (chokidar)
+        try {
+            await checkerFolder.close();
+            console.log('Watcher closed');
+        } catch (err) {
+            console.error('Error closing watcher:', err);
+        }
+
+        // 2) Закрыть socket.io (подождём callback)
+        try {
+            await new Promise<void>((resolve) => {
+                io.close(() => {
+                    console.log('Socket.io closed');
+                    resolve();
+                });
+            });
+        } catch (err) {
+            console.error('Error closing socket.io:', err);
+        }
+
+        // 3) Закрыть HTTP сервер (ждём завершения всех соединений)
+        try {
+            await new Promise<void>((resolve, reject) => {
+                server.close((err) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        console.log('HTTP server closed');
+                        resolve();
+                    }
+                });
+            });
+        } catch (err) {
+            console.error('Error closing HTTP server:', err);
+        }
+
+        // Здесь можно добавить финализацию (сохранение очереди сообщений и т.п.)
+
+        console.log('Shutdown complete');
+        process.exit(0);
+    } catch (err) {
+        console.error('Fatal error during shutdown:', err);
+        process.exit(1);
+    }
+};
+
+// Фейковый таймаут на аварийный exit, если что-то зависло
+const scheduleForceExit = () => {
+    setTimeout(() => {
+        console.error(`Forcing exit after ${FORCE_EXIT_TIMEOUT}ms`);
+        process.exit(1);
+    }, FORCE_EXIT_TIMEOUT).unref();
+};
+
+// Обработчики сигналов и ошибок
+process.on('SIGINT', () => {
+    scheduleForceExit();
+    gracefulShutdown('SIGINT');
+});
+process.on('SIGTERM', () => {
+    scheduleForceExit();
+    gracefulShutdown('SIGTERM');
+});
+process.on('uncaughtException', (err) => {
+    console.error('uncaughtException:', err);
+    scheduleForceExit();
+    gracefulShutdown('uncaughtException');
+});
+process.on('unhandledRejection', (reason) => {
+    console.error('unhandledRejection:', reason);
+    scheduleForceExit();
+    gracefulShutdown('unhandledRejection');
+});
