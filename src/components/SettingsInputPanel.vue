@@ -26,13 +26,13 @@ const fetchRemover =
 const placeholder =
 	typeInput === 'separator' ? 'Введите разделитель' : 'Введите игнорируемый символ';
 
+const forbiddenRegex = /[a-zA-Zа-яА-Я0-9]/;
 const validateInput = (
 	value: string,
 	valueState: Ref<string, string>,
 	errorState: Ref<string, string>,
 ): void => {
 	const char = value ? value.slice(-1) : '';
-	const forbiddenRegex = /[a-zA-Zа-яА-Я0-9]/;
 
 	if (
 		(forbiddenRegex.test(char) && char !== '') ||
@@ -125,7 +125,8 @@ onMounted(() => {
 						type="text"
 						:placeholder="placeholder"
 						maxlength="1"
-						:errorData="errorData"
+						:errorMessage="errorData"
+						:regex="forbiddenRegex"
 					/>
 					<ButtonUi :disabled="!dataInput || errorData.length > 0" type="submit"
 						><v-icon>mdi-plus-circle-outline</v-icon></ButtonUi
@@ -136,7 +137,6 @@ onMounted(() => {
 	</SettingsPanelContainerUi>
 </template>
 <style scoped>
-
 .input-header {
 	display: flex;
 	align-items: center;

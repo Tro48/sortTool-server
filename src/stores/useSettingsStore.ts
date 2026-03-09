@@ -16,6 +16,7 @@ interface ISettingsState {
 	foldersDir: string;
 	listenDir: string;
 	isStartScript: boolean;
+	isSettingsDirState: boolean;
 }
 
 export const useSettings = defineStore('settingsStore', {
@@ -33,6 +34,7 @@ export const useSettings = defineStore('settingsStore', {
 		foldersDir: '',
 		listenDir: '',
 		isStartScript: false,
+		isSettingsDirState: false,
 	}),
 	actions: {
 		async fetchIgnoredChars() {
@@ -210,6 +212,10 @@ export const useSettings = defineStore('settingsStore', {
 						tagsDir,
 						listenDir,
 					}: SettingsFileData = await response.json();
+					if (!foldersDir && !listenDir) {
+						this.isSettingsDirState = false;
+					}
+					this.isSettingsDirState = true;
 					this.foldersDir = foldersDir;
 					this.ignoredChars = ignoredChars;
 					this.separators = [{ id: separators, value: separators }];
@@ -244,6 +250,29 @@ export const useSettings = defineStore('settingsStore', {
 				console.error('Ошибка:', error);
 			}
 		},
+		async fetchSettingsDirState() {
+			try {
+				const response = await fetch(apiUrl + 'settings/status', { method: 'GET' });
+				const data = await response.json();
+				this.isSettingsDirState = data.state;
+			} catch (error) {
+				console.error('Ошибка:', error);
+			}
+		},
+		async fetchAddFoldersDir(foldersDirData: { foldersDir: string; listenDir: string }) {
+      try {
+        const response = await fetch(apiUrl + 'settings/setFoldersDir', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(foldersDirData),
+				});
+        if (response.ok) {
+          this.fetchSettingsDirState();
+        }
+      } catch (error) {
+        console.error('Ошибка:', error);
+      }
+    },
 	},
 	getters: {
 		getFolders: (state) => {

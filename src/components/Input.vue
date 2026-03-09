@@ -1,18 +1,24 @@
 <script setup lang="ts">
-import type { InputTypeHTMLAttribute } from 'vue';
+import { computed, type InputTypeHTMLAttribute } from 'vue';
 
 const props = defineProps<{
-	modelValue: { type: [string, number]; default: '' };
+	modelValue?: string;
 	type: InputTypeHTMLAttribute;
 	id?: string;
 	placeholder: string;
 	maxlength?: string;
-	errorData?: string;
+	errorMessage?: string;
+	regex?: RegExp | ((value: string) => boolean);
 }>();
-
-const model = defineModel();
+const model = defineModel<string>();
 
 const emit = defineEmits(['update:modelValue', 'input', 'change']);
+
+const isValid = computed(() => {
+	if (!props.regex) return true;
+  if (typeof props.regex === 'function') return props.regex(model.value ?? '');
+	return props.regex.test(String(model.value ?? ''));
+});
 
 function onInput(e: Event) {
 	const val = (e.target as HTMLInputElement).value;
@@ -27,22 +33,20 @@ function onInput(e: Event) {
 			:id="id"
 			:type="type"
 			:placeholder="placeholder"
-			:value="modelValue"
 			@input="onInput"
-			:class="['input', { 'input-error': errorData }]"
-			maxlength="maxlength"
+			:class="['input', { 'input-error': !isValid }]"
+			:maxlength="maxlength"
 		/>
-		<p class="input-error-message" v-if="errorData">{{ errorData }}</p>
+		<p class="input-error-message" v-if="!isValid">{{ errorMessage }}</p>
 		<p class="input-error-message" v-else></p>
 	</div>
 </template>
 <style scoped>
-
 .input-container {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  inline-size: 100%;
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	inline-size: 100%;
 }
 
 .input {
@@ -62,10 +66,10 @@ function onInput(e: Event) {
 }
 
 .input-error-message {
-  position: absolute;
-  block-size: 16px;
-  bottom: -20px;
-  left: 0;
-  color: red;
+	position: absolute;
+	block-size: 16px;
+	bottom: -20px;
+	left: 0;
+	color: red;
 }
 </style>

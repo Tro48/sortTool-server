@@ -27,7 +27,7 @@ const tagsEntries = computed(() => {
 </script>
 <template>
 	<section class="settings-section">
-		<WorkingWithFiles />
+		<WorkingWithFiles isDownloadButton />
 		<div class="settings-blocks-container">
 			<SettingsInputPanel typeInput="separator" />
 			<SettingsInputPanel typeInput="ignoredChars" />

@@ -26,12 +26,12 @@ io.on('connection', (_socket) => {
 const { settingsData } = getDb();
 
 if (!settingsData.foldersDir || !settingsData.listenDir) {
+	console.error('Не указаны деректория папок или листен директория');
 	io.emit('errorFolderDir', 'Не указаны деректория папок или листен директория');
 } else {
 	checkerFolder.setNewDir(settingsData.listenDir);
 	checkerFolder.start();
 }
-
 
 const settingsKeys = {
 	separators: 'separators',
@@ -45,6 +45,35 @@ const settingsKeys = {
 app.use(express.static('dist'));
 app.use(cors());
 app.use(express.json());
+
+app.get('/api/settings/status', (_, res) => {
+	const { settingsData } = getDb();
+	if (!settingsData.foldersDir || !settingsData.listenDir) {
+		return res.status(400).json({ state: false, error: 'Missing foldersDir or listenDir' });
+	}
+	res.json({
+		state: true,
+		settings: { foldersDir: settingsData.foldersDir, listenDir: settingsData.listenDir },
+	});
+});
+
+app.post('/api/settings/setFoldersDir', (req, res) => {
+	const { settingsData } = getDb();
+	const settingsItem = { ...req?.body };
+	if (!settingsItem) return res?.status(500).json({ error: 'Нет данных для добавления' });
+	const newSettings = {
+		...settingsData,
+		foldersDir: settingsItem.foldersDir,
+		listenDir: settingsItem.listenDir,
+	};
+	fs.writeFile(settingsFileDir, JSON.stringify(newSettings), 'utf8', (err) => {
+		if (err) {
+			res?.status(501).send('Ошибка записи файла настроек');
+			return;
+		}
+		res?.status(201).send(JSON.stringify(newSettings));
+	});
+});
 
 app.get('/api/folders', (_, res) => {
 	const _settings = JSON.parse(fs.readFileSync(settingsFileDir, 'utf-8'));

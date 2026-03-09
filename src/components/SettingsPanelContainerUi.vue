@@ -1,18 +1,21 @@
 <script setup lang="ts">
 const props = defineProps<{
-  type: 'separator' | 'ignoredChars' | 'tagsInput' | 'tagsList';
+	type: 'separator' | 'ignoredChars' | 'tagsInput' | 'tagsList' | 'default';
 }>();
 
 const { type } = props;
-
 </script>
 <template>
-  <div :class="['settings-block', { 'settings-block-tag': type === 'tagsInput', 'tag-list-block': type === 'tagsList' }]">
-    <slot></slot>
-  </div>
+	<div
+		:class="[
+			'settings-block',
+			{ 'settings-block-tag': type === 'tagsInput', 'tag-list-block': type === 'tagsList', 'settings-block-default': type === 'default' },
+		]"
+	>
+		<slot></slot>
+	</div>
 </template>
 <style scoped>
-
 .settings-block {
 	display: flex;
 	flex-direction: column;
@@ -25,6 +28,10 @@ const { type } = props;
 	background-color: var(--bg-color-section);
 }
 
+.settings-block-default {
+  padding: 10px;
+}
+
 .tag-list-block {
 	overflow: hidden;
 	padding: 5px;
@@ -33,5 +40,4 @@ const { type } = props;
 .settings-block.settings-block-tag {
 	grid-column: span 2;
 }
-
 </style>

@@ -2,8 +2,14 @@
 import ButtonUi from '@/components/ButtonUi.vue';
 import { useSettings } from '@/stores/useSettingsStore';
 import { type SettingsFileData } from '@/types/types';
-import { ref } from 'vue';
+import { ref, toRef } from 'vue';
 
+const props = defineProps({
+    isDownloadButton: { type: Boolean, default: false },
+    customClass: { type: String, default: '' },
+});
+const isDownloadButton = toRef(props, 'isDownloadButton');
+const customClass = toRef(props, 'customClass');
 const settings = useSettings();
 
 const inputRef = ref<HTMLInputElement | null>(null);
@@ -31,7 +37,8 @@ async function onChange(e: Event) {
 </script>
 
 <template>
-	<div class="settings-dw-block">
+	<div class="settings-dw-block " :class="customClass">
+    <slot></slot>
 		<input
 			ref="inputRef"
 			class="visually-hidden"
@@ -47,6 +54,7 @@ async function onChange(e: Event) {
 			><v-icon>mdi-file-download-outline</v-icon></ButtonUi
 		>
 		<ButtonUi
+      v-if="isDownloadButton"
 			type="button"
 			@click="settings.fetchDownloadSettings"
 			tooltip="Сохранить файл с настройками"
@@ -62,10 +70,9 @@ async function onChange(e: Event) {
 	align-items: center;
 	gap: 5px;
 	inline-size: 100%;
-  padding: 5px;
+	padding: 5px;
 	background-color: var(--bg-color-section);
 	border-radius: 5px;
 	box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
-
 </style>
