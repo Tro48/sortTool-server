@@ -1,18 +1,14 @@
-import chokidar from 'chokidar';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
 import fs from 'fs';
 import http from 'http';
-import os from 'os';
 import path from 'path';
 import { Server } from 'socket.io';
-import settings from '../backend/db/settings.json';
 import { delayedClear } from '../backend/scripts/clearLog';
-import { copyFile } from '../backend/scripts/copyFile';
+import { getDb } from '../backend/scripts/utils';
 import { deleteSettings, getSettings, setSettings } from './methods';
-import { getDb } from './getDb';
-const platform = os.platform();
+import { CheckerFiles } from '../backend/scripts/checkerFiles';
 dotenv.config();
 const app = express();
 const server = http.createServer(app);
@@ -20,65 +16,17 @@ const io = new Server(server, { cors: { origin: '*' } });
 const port = process.env.VITE_PORT;
 const settingsFileDir = 'backend/db/settings.json';
 const logsDir = 'backend/db/logs.json';
-const checkerFolder = chokidar.watch(settings.listenDir, {
-	awaitWriteFinish: { stabilityThreshold: 2000, pollInterval: 100 },
-});
+const checkerFolder = new CheckerFiles(io)
 const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
 delayedClear(logsDir, THREE_DAYS_MS);
 
-const getFileName = (dir: string) => dir.split(platform === 'win32' ? '\\' : '/').slice(-1)[0];
+const { settingsData } = getDb();
 
-const messageStore = new Map();
-
-const { settingsData, logsData } = getDb({
-	settingsDir: settingsFileDir,
-	logsDir,
-});
-
-console.log(settingsData, logsData);
-
-const sendLog = (
-	message: string,
-	state: 'pending' | 'pass' | 'error' | 'globalError',
-	fileName: string,
-) => {
-	const date = new Date();
-	if (state === 'globalError') {
-		io.emit('error', message)
+	if (!settingsData.foldersDir || !settingsData.listenDir) {
+		io.emit('errorFolderDir', 'Не указаны деректория папок или листен директория');
 	} else {
-		messageStore.set(fileName, {
-			fileName,
-			state,
-			message:
-				date.toLocaleDateString('ru-RU', {
-					hour: 'numeric',
-					minute: 'numeric',
-					second: 'numeric',
-				}) +
-				' ' +
-				message,
-		});
-		io.emit('log', messageStore.get(fileName)); // Отправка на фронт
+		checkerFolder.setNewDir(settingsData.foldersDir);
 	}
-};
-
-try {
-	checkerFolder
-		.on('add', (filePath: string) =>
-			copyFile(filePath, sendLog, getFileName(filePath), messageStore),
-		)
-		.on('change', (filePath: string) =>
-			setTimeout(() => {
-				copyFile(filePath, sendLog, getFileName(filePath), messageStore);
-			}, 500),
-		)
-		.on('error', (err: unknown) => {
-			if (err instanceof Error) console.error(err.message);
-			else console.error(err);
-		});
-} catch (error) {
-	console.error('Ошибка при отслеживании папки:', error);
-}
 
 const settingsKeys = {
 	separators: 'separators',
@@ -248,84 +196,83 @@ server.listen(port, () => {
 	console.log(`Example app listening on port ${port}`);
 });
 
-
 // Грейсфул-шаутдаун
 const FORCE_EXIT_TIMEOUT = 10000; // ms
 
 const gracefulShutdown = async (reason: string) => {
-    try {
-        console.log(`Shutting down: ${reason}`);
+	try {
+		console.log(`Shutting down: ${reason}`);
 
-        // 1) Остановить watcher (chokidar)
-        try {
-            await checkerFolder.close();
-            console.log('Watcher closed');
-        } catch (err) {
-            console.error('Error closing watcher:', err);
-        }
+		// 1) Остановить watcher (chokidar)
+		try {
+			await checkerFolder.stop();
+			console.log('Watcher closed');
+		} catch (err) {
+			console.error('Error closing watcher:', err);
+		}
 
-        // 2) Закрыть socket.io (подождём callback)
-        try {
-            await new Promise<void>((resolve) => {
-                io.close(() => {
-                    console.log('Socket.io closed');
-                    resolve();
-                });
-            });
-        } catch (err) {
-            console.error('Error closing socket.io:', err);
-        }
+		// 2) Закрыть socket.io (подождём callback)
+		try {
+			await new Promise<void>((resolve) => {
+				io.close(() => {
+					console.log('Socket.io closed');
+					resolve();
+				});
+			});
+		} catch (err) {
+			console.error('Error closing socket.io:', err);
+		}
 
-        // 3) Закрыть HTTP сервер (ждём завершения всех соединений)
-        try {
-            await new Promise<void>((resolve, reject) => {
-                server.close((err) => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        console.log('HTTP server closed');
-                        resolve();
-                    }
-                });
-            });
-        } catch (err) {
-            console.error('Error closing HTTP server:', err);
-        }
+		// 3) Закрыть HTTP сервер (ждём завершения всех соединений)
+		try {
+			await new Promise<void>((resolve, reject) => {
+				server.close((err) => {
+					if (err) {
+						reject(err);
+					} else {
+						console.log('HTTP server closed');
+						resolve();
+					}
+				});
+			});
+		} catch (err) {
+			console.error('Error closing HTTP server:', err);
+		}
 
-        // Здесь можно добавить финализацию (сохранение очереди сообщений и т.п.)
+		// Здесь можно добавить финализацию (сохранение очереди сообщений и т.п.)
 
-        console.log('Shutdown complete');
-        process.exit(0);
-    } catch (err) {
-        console.error('Fatal error during shutdown:', err);
-        process.exit(1);
-    }
+		console.log('Shutdown complete');
+		process.exit(0);
+	} catch (err) {
+		console.error('Fatal error during shutdown:', err);
+		process.exit(1);
+	}
 };
 
 // Фейковый таймаут на аварийный exit, если что-то зависло
 const scheduleForceExit = () => {
-    setTimeout(() => {
-        console.error(`Forcing exit after ${FORCE_EXIT_TIMEOUT}ms`);
-        process.exit(1);
-    }, FORCE_EXIT_TIMEOUT).unref();
+	setTimeout(() => {
+		console.error(`Forcing exit after ${FORCE_EXIT_TIMEOUT}ms`);
+		process.exit(1);
+	}, FORCE_EXIT_TIMEOUT).unref();
 };
 
 // Обработчики сигналов и ошибок
 process.on('SIGINT', () => {
-    scheduleForceExit();
-    gracefulShutdown('SIGINT');
+	scheduleForceExit();
+	gracefulShutdown('SIGINT');
 });
 process.on('SIGTERM', () => {
-    scheduleForceExit();
-    gracefulShutdown('SIGTERM');
+	scheduleForceExit();
+	gracefulShutdown('SIGTERM');
 });
 process.on('uncaughtException', (err) => {
-    console.error('uncaughtException:', err);
-    scheduleForceExit();
-    gracefulShutdown('uncaughtException');
+	console.error('uncaughtException:', err);
+	scheduleForceExit();
+	gracefulShutdown('uncaughtException');
 });
 process.on('unhandledRejection', (reason) => {
-    console.error('unhandledRejection:', reason);
-    scheduleForceExit();
-    gracefulShutdown('unhandledRejection');
+	console.error('unhandledRejection:', reason);
+	scheduleForceExit();
+	gracefulShutdown('unhandledRejection');
 });
