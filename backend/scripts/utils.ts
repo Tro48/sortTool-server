@@ -45,6 +45,7 @@ export const getDb = (): { settingsData: SettingsFileData; logsData: UseLogs } =
 		separators: '',
 		tagsDir: {},
 		listenDir: '',
+		ignoredNames: [],
 	};
 
 	let logsData: UseLogs = {
@@ -76,7 +77,6 @@ export const calculateNewDir = (dir: string): string => {
 	let newDir = '';
 	try {
 		const settings: SettingsFileData = settingsData;
-
 		const ignoredCharData = settings.ignoredChars
 			.map((data) => escapeRegExp(data.value))
 			.join('');
@@ -128,7 +128,9 @@ export async function copyFile(
 	path: string,
 	io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, unknown>,
 ) {
-  const fileName = getFileName(path);
+	const { settingsData } = getDb();
+	const fileName = getFileName(path);
+	if (settingsData.ignoredNames.includes(fileName)) return;
 	const newFileDir = calculateNewDir(path);
 	if (newFileDir) {
 		try {

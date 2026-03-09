@@ -81,5 +81,8 @@
 		"CMYK_C2": "CMYK_PP_Cyan2",
 		"CMYK_INV_MET": "CMYK_PP_Inverse_met",
 		"CMYK_INVERSE_MET": "CMYK_PP_Inverse_met"
-	}
+	},
+	"ignoredNames": [
+		".DS_Store"
+	]
 }

@@ -4,6 +4,7 @@ export interface SettingsFileData {
   separators: string;
   tagsDir: Record<string, string>;
   listenDir: string;
+  ignoredNames: string[]
 }
 
 

@@ -21,8 +21,8 @@ export class CheckerFiles {
 		}
 	}
 	start() {
-		if (!this.dir || !this.checkerFolder) {
-			console.error('Watcher not found');
+		if (!this.dir) {
+			console.error('dir not found');
 			return;
 		}
 		this.checkerFolder = chokidar.watch(this.dir, {
@@ -39,6 +39,7 @@ export class CheckerFiles {
 				if (err instanceof Error) console.error(err.message);
 				else console.error(err);
 			});
+      console.log('Watcher started', this.dir);
 	}
 	async stop() {
 		if (!this.checkerFolder) {

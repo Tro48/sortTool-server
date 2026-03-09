@@ -5,10 +5,10 @@ import fs from 'fs';
 import http from 'http';
 import path from 'path';
 import { Server } from 'socket.io';
+import { CheckerFiles } from '../backend/scripts/checkerFiles';
 import { delayedClear } from '../backend/scripts/clearLog';
 import { getDb } from '../backend/scripts/utils';
 import { deleteSettings, getSettings, setSettings } from './methods';
-import { CheckerFiles } from '../backend/scripts/checkerFiles';
 dotenv.config();
 const app = express();
 const server = http.createServer(app);
@@ -16,17 +16,22 @@ const io = new Server(server, { cors: { origin: '*' } });
 const port = process.env.VITE_PORT;
 const settingsFileDir = 'backend/db/settings.json';
 const logsDir = 'backend/db/logs.json';
-const checkerFolder = new CheckerFiles(io)
+const checkerFolder = new CheckerFiles(io);
 const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
 delayedClear(logsDir, THREE_DAYS_MS);
+io.on('connection', (_socket) => {
+	console.log('Фронтенд подключился');
+});
 
 const { settingsData } = getDb();
 
-	if (!settingsData.foldersDir || !settingsData.listenDir) {
-		io.emit('errorFolderDir', 'Не указаны деректория папок или листен директория');
-	} else {
-		checkerFolder.setNewDir(settingsData.foldersDir);
-	}
+if (!settingsData.foldersDir || !settingsData.listenDir) {
+	io.emit('errorFolderDir', 'Не указаны деректория папок или листен директория');
+} else {
+	checkerFolder.setNewDir(settingsData.listenDir);
+	checkerFolder.start();
+}
+
 
 const settingsKeys = {
 	separators: 'separators',
@@ -40,10 +45,6 @@ const settingsKeys = {
 app.use(express.static('dist'));
 app.use(cors());
 app.use(express.json());
-
-io.on('connection', (_socket) => {
-	console.log('Фронтенд подключился');
-});
 
 app.get('/api/folders', (_, res) => {
 	const _settings = JSON.parse(fs.readFileSync(settingsFileDir, 'utf-8'));
