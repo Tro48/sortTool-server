@@ -4,7 +4,7 @@ const props = defineProps<{
 }>();
 import { useSettings } from '@/stores/useSettingsStore';
 import { storeToRefs } from 'pinia';
-import { onMounted, ref, watchEffect, type Ref } from 'vue';
+import { onMounted, ref, watchEffect } from 'vue';
 import ButtonUi from './ButtonUi.vue';
 import FormUi from './FormUi.vue';
 import Input from './Input.vue';
@@ -13,7 +13,7 @@ import SettingsElementsListUi from './SettingsElementsListUi.vue';
 import SettingsPanelContainerUi from './SettingsPanelContainerUi.vue';
 
 const settings = useSettings();
-const { ignoredChars, pendingChars, separators, pendingSep } = storeToRefs(settings);
+const { ignoredChars, pendingChars, separators, pendingSep, tagsDir } = storeToRefs(settings);
 
 const { typeInput } = props;
 
@@ -30,6 +30,8 @@ const forbiddenRegex = /^[^a-zA-Zа-яА-ЯёЁ0-9\s*\-\\]+$/;
 const dataInput = ref('');
 const errorData = ref('');
 const folderInputData = ref('');
+const dataInputTag = ref('');
+const dataInputTagErrorMessage = ref('');
 
 const handler =
 	typeInput === 'tagsInput'
@@ -51,7 +53,16 @@ const handler =
 			};
 
 const onInputData = (value: string) => {
-	dataInput.value = value
+	dataInput.value = value;
+};
+
+const onInputTagData = (value: string) => {
+	dataInputTag.value = value;
+};
+
+const validateTagInput = (value: string): boolean => {
+	const dataArr = value.toUpperCase().replace(' ', '').split(',');
+	return !dataArr.some((str) => tagsDir.value.has(str));
 };
 
 onMounted(() => {
@@ -70,6 +81,11 @@ watchEffect(() => {
 	} else {
 		errorData.value = '';
 	}
+	if (!validateTagInput(dataInputTag.value)) {
+		dataInputTagErrorMessage.value = 'Такая цветовая схема уже существует';
+	} else {
+		dataInputTagErrorMessage.value = '';
+	}
 });
 </script>
 
@@ -84,13 +100,24 @@ watchEffect(() => {
 						id="tag-name"
 						type="text"
 						placeholder="CMYK, BL2..."
+						@input="onInputTagData"
+						:regex="validateTagInput"
+						:errorMessage="dataInputTagErrorMessage"
 					/>
 				</div>
 				<div class="input-group input-group-tag">
 					<label class="input-header" for="tag-folder">Выбрать папку:</label>
 					<div class="input-group-tag-button-block">
 						<InputFolders v-model="folderInputData" placeholder="Выберите папку" />
-						<ButtonUi type="submit"><v-icon>mdi-tag-plus-outline</v-icon></ButtonUi>
+						<ButtonUi
+							:disabled="
+								!dataInputTag ||
+								dataInputTagErrorMessage.length > 0 ||
+								!folderInputData
+							"
+							type="submit"
+							><v-icon>mdi-tag-plus-outline</v-icon></ButtonUi
+						>
 					</div>
 				</div>
 			</template>
