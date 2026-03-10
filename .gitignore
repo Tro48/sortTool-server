@@ -144,4 +144,4 @@ release
 .DS_Store?
 
 
-backend/db/*
+backend/*.json
