@@ -5,22 +5,29 @@ import fs from 'fs';
 import http from 'http';
 import path from 'path';
 import { Server } from 'socket.io';
+import { fileURLToPath } from 'url';
 import { CheckerFiles } from '../scripts/checkerFiles';
 import { delayedClear } from '../scripts/clearLog';
-import { getDb, logsDir, settingsDir } from '../scripts/utils';
+import { configPath, getDb, logsDir, settingsDir } from '../scripts/utils';
 import { deleteSettings, getSettings, setSettings } from './methods';
-import { fileURLToPath } from 'url';
 // Эмуляция __dirname для ES Modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const distPath = typeof process.pkg !== 'undefined'
-  ? path.join(__dirname, '../../dist_bundled')
-  : 'dist';
+const distPath =
+	typeof process.pkg !== 'undefined' ? path.join(__dirname, '../dist_bundled') : 'dist';
+const serverIp = typeof process.pkg !== 'undefined' ? '0.0.0.0' : '';
+let serverConfig = { PORT: 5050, API_URL: 'http://localhost:3000' };
+if (fs.existsSync(configPath)) {
+	try {
+		serverConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+	} catch (error) {
+		console.error('Ошибка чтения config.json, используем дефолты', error);
+	}
+}
 dotenv.config();
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: '*' } });
-const port = Number(process.env.VITE_PORT) || 3000;
 const checkerFolder = new CheckerFiles(io);
 const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
 delayedClear(logsDir, THREE_DAYS_MS);
@@ -137,16 +144,16 @@ app.get('/api/ignoredChars', (_, res) =>
 		settingsDir,
 	}),
 );
-app.get('/api/logs', (_, res) =>
-	fs.readFile(logsDir, 'utf8', (err, data) => {
-		if (err) {
-			console.error(err);
-			res?.status(500).send('Ошибка чтения файла логов');
-			return;
-		}
-		res?.send(data);
-	}),
-);
+app.get('/api/logs', (_, res) => {
+	const data = fs.readFileSync(logsDir, 'utf8').trim();
+	try {
+		const json = JSON.parse(data);
+		res.json(json);
+	} catch (err) {
+		console.error(err);
+		res.send(data);
+	}
+});
 app.get('/api/tagsDir', (_, res) =>
 	getSettings({ res, settingsType: settingsKeys.tagsDir, settingsDir }),
 );
@@ -239,8 +246,9 @@ app.get('/api/settings/download', (_, res) => {
 	});
 });
 
-server.listen(port, '0.0.0.0', () => {
-	console.log(`Example app listening on port ${port}`);
+server.listen(serverConfig.PORT, serverIp, () => {
+	console.log(`Сервер запущен: ${serverConfig.API_URL}:${serverConfig.PORT}`);
+	console.log(`Что бы закрыть приложение нажмите CTRL + C или закройте окно`);
 });
 
 // Грейсфул-шаутдаун

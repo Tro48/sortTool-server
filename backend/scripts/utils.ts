@@ -13,6 +13,10 @@ export const logsDir = process.pkg
 	? path.join(rootDir, 'logs.json')
 	: path.resolve(rootDir, './backend/logs.json');
 
+export const configPath = process.pkg
+	? path.join(rootDir, 'config.json')
+	: path.resolve(rootDir, './backend/config.json');
+
 const messageStore = new Map();
 const platform = os.platform();
 const escapeRegExp = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -131,6 +135,22 @@ export const calculateNewDir = (dir: string): string => {
 	return newDir;
 };
 
+const setLogDataFile = (
+	fileName: string,
+	io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, unknown>,
+) => {
+	try {
+		const jsonFileData: string = fs.readFileSync(logsDir, 'utf8');
+		const logs = JSON.parse(jsonFileData);
+		logs[fileName] = messageStore.get(fileName);
+		fs.writeFileSync(logsDir, JSON.stringify(logs, null, 2), 'utf8');
+		messageStore.delete(fileName);
+	} catch (error) {
+		console.log(error);
+		sendLog(`Ошибка записи файла ${error}`, 'globalError', fileName, io, messageStore);
+	}
+};
+
 export async function copyFile(
 	path: string,
 	io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, unknown>,
@@ -163,67 +183,13 @@ export async function copyFile(
 					const newFileDirArr = newFileDir.split(platform === 'win32' ? '\\' : '/');
 					const folder = newFileDirArr[newFileDirArr.length - 2];
 					sendLog(`Файл отправлен в папку ${folder}`, 'pass', fileName, io, messageStore);
-					fs.readFile(logsDir, 'utf8', (err, data) => {
-						if (err) {
-							console.error(err);
-							sendLog(
-								`Ошибка чтения ${err}`,
-								'globalError',
-								fileName,
-								io,
-								messageStore,
-							);
-							return;
-						}
-						const logsList = JSON.parse(data);
-						logsList[fileName] = messageStore.get(fileName);
-						fs.writeFile(logsDir, JSON.stringify(logsList), 'utf8', (err) => {
-							if (err) {
-								console.error(err);
-								sendLog(
-									`Ошибка записи файла ${err}`,
-									'globalError',
-									fileName,
-									io,
-									messageStore,
-								);
-							}
-							messageStore.delete(fileName);
-						});
-					});
+					setLogDataFile(fileName, io);
 				});
 			});
 			// oxlint-disable-next-line no-unused-vars
 		} catch (err) {
 			sendLog(`Ошибка отправки: ${err}`, 'error', fileName, io, messageStore);
-			fs.readFile(logsDir, 'utf8', (err, data) => {
-				if (err) {
-					console.error(err);
-					sendLog(
-						`Ошибка чтения файла ${err}`,
-						'globalError',
-						fileName,
-						io,
-						messageStore,
-					);
-					return;
-				}
-				const logsList = JSON.parse(data);
-				logsList[fileName] = messageStore.get(fileName);
-				fs.writeFile(logsDir, JSON.stringify(logsList), 'utf8', (err) => {
-					if (err) {
-						console.error(err);
-						sendLog(
-							`Ошибка записи файла ${err}`,
-							'globalError',
-							fileName,
-							io,
-							messageStore,
-						);
-					}
-					messageStore.delete(fileName);
-				});
-			});
+			setLogDataFile(fileName, io);
 		}
 	} else {
 		fs.unlink(path, (err) => {
@@ -239,34 +205,7 @@ export async function copyFile(
 				io,
 				messageStore,
 			);
-			fs.readFile(logsDir, 'utf8', (err, data) => {
-				if (err) {
-					console.error(err);
-					sendLog(
-						`Ошибка чтения файла ${err}`,
-						'globalError',
-						fileName,
-						io,
-						messageStore,
-					);
-					return;
-				}
-				const logsList = JSON.parse(data);
-				logsList[fileName] = messageStore.get(fileName);
-				fs.writeFile(logsDir, JSON.stringify(logsList), 'utf8', (err) => {
-					if (err) {
-						console.error(err);
-						sendLog(
-							`Ошибка записи файла ${err}`,
-							'globalError',
-							fileName,
-							io,
-							messageStore,
-						);
-					}
-					messageStore.delete(fileName);
-				});
-			});
+			setLogDataFile(fileName, io);
 		});
 	}
 }
