@@ -262,19 +262,19 @@ export const useSettings = defineStore('settingsStore', {
 			}
 		},
 		async fetchAddFoldersDir(foldersDirData: { foldersDir: string; listenDir: string }) {
-      try {
-        const response = await fetch(apiUrl + 'settings/setFoldersDir', {
+			try {
+				const response = await fetch(apiUrl + 'settings/setFoldersDir', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify(foldersDirData),
 				});
-        if (response.ok) {
-          this.fetchSettingsDirState();
-        }
-      } catch (error) {
-        console.error('Ошибка:', error);
-      }
-    },
+				if (response.ok) {
+					this.fetchSettingsDirState();
+				}
+			} catch (error) {
+				console.error('Ошибка:', error);
+			}
+		},
 	},
 	getters: {
 		getFolders: (state) => {
@@ -291,18 +291,29 @@ export const useSettings = defineStore('settingsStore', {
 
 export const useSocket = defineStore('socket', {
 	state: () => ({
-		socket : io(baseUrl, { autoConnect: true })
+		socket: io(baseUrl, { autoConnect: true }),
+		scriptState: '',
 	}),
 	actions: {
-		onLog(cb:(log: ILogItem) => void){
+		onLog(cb: (log: ILogItem) => void) {
 			this.socket.on('log', (data) => {
 				cb(data);
 			});
 		},
-		onNewFolder(cb:() => void){
+		onNewFolder(cb: () => void) {
 			this.socket.on('newFolderAadd', (data) => {
 				cb();
 			});
-		}
-	}
-})
+		},
+		onScriptListenerState() {
+			this.socket.on('scriptStart', (data) => {
+				console.log(data)
+				this.scriptState = data;
+			});
+			this.socket.on('scriptStop', (data) => {
+				console.log(data)
+				this.scriptState = data;
+			});
+		},
+	},
+});

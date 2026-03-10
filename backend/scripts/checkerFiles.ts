@@ -39,7 +39,9 @@ export class CheckerFiles {
 				if (err instanceof Error) console.error(err.message);
 				else console.error(err);
 			});
-      console.log('Watcher started', this.dir);
+		setTimeout(() => {
+			this.io.emit('scriptStart', 'Скрипт запущен');
+		}, 3000);
 	}
 	async stop() {
 		if (!this.checkerFolder) {
@@ -48,5 +50,6 @@ export class CheckerFiles {
 		}
 		this.checkerFolder.unwatch(this.dir);
 		await this.checkerFolder.close();
+		this.io.emit('scriptStop', 'Скрипт остановлен');
 	}
 }

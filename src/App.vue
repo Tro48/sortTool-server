@@ -5,13 +5,16 @@ import AddSettingsDir from './components/AddSettingsDir.vue';
 import LogsBlock from './components/LogsBlock.vue';
 import SettingsBlock from './components/SettingsBlock.vue';
 import TabsPanel from './components/TabsPanel.vue';
-import { useSettings } from './stores/useSettingsStore';
+import { useSettings, useSocket } from './stores/useSettingsStore';
 
 const settings = useSettings();
+const socket = useSocket()
 const { isSettingsDirState } = storeToRefs(settings);
+const { scriptState } = storeToRefs(socket);
 
 onMounted(() => {
 	settings.fetchSettingsDirState();
+	socket.onScriptListenerState();
 });
 </script>
 
@@ -45,6 +48,7 @@ onMounted(() => {
 					<p>Автоматическая отправка файлов</p>
 				</div>
 			</div>
+			<p v-if="scriptState">{{ scriptState }}</p>
 		</header>
 		<main class="main">
 			<TabsPanel :names="['Логи', 'Настройки']" :panels="[LogsBlock, SettingsBlock]" />
