@@ -16,7 +16,7 @@ const emit = defineEmits(['update:modelValue', 'input', 'change']);
 
 const isValid = computed(() => {
 	if (!props.regex) return true;
-  if (typeof props.regex === 'function') return props.regex(model.value ?? '');
+	if (typeof props.regex === 'function') return props.regex(model.value ?? '');
 	return props.regex.test(String(model.value ?? ''));
 });
 

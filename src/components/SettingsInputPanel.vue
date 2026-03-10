@@ -4,7 +4,7 @@ const props = defineProps<{
 }>();
 import { useSettings } from '@/stores/useSettingsStore';
 import { storeToRefs } from 'pinia';
-import { onMounted, ref, type Ref } from 'vue';
+import { onMounted, ref, watchEffect, type Ref } from 'vue';
 import ButtonUi from './ButtonUi.vue';
 import FormUi from './FormUi.vue';
 import Input from './Input.vue';
@@ -26,28 +26,7 @@ const fetchRemover =
 const placeholder =
 	typeInput === 'separator' ? 'Введите разделитель' : 'Введите игнорируемый символ';
 
-const forbiddenRegex = /[a-zA-Zа-яА-Я0-9]/;
-const validateInput = (
-	value: string,
-	valueState: Ref<string, string>,
-	errorState: Ref<string, string>,
-): void => {
-	const char = value ? value.slice(-1) : '';
-
-	if (
-		(forbiddenRegex.test(char) && char !== '') ||
-		char === '-' ||
-		char === '*' ||
-		char === '\\'
-	) {
-		errorState.value = 'Разрешены только символы, кроме букв, цифр и знаков - * \\';
-		valueState.value = char;
-	} else {
-		errorState.value = '';
-		valueState.value = char;
-	}
-};
-
+const forbiddenRegex = /^[^a-zA-Zа-яА-ЯёЁ0-9\s*\-\\]+$/;
 const dataInput = ref('');
 const errorData = ref('');
 const folderInputData = ref('');
@@ -72,7 +51,7 @@ const handler =
 			};
 
 const onInputData = (value: string) => {
-	validateInput(value, dataInput, errorData);
+	dataInput.value = value
 };
 
 onMounted(() => {
@@ -82,6 +61,14 @@ onMounted(() => {
 		settings.fetchIgnoredChars();
 	} else if (typeInput === 'tagsInput') {
 		settings.fetchAllTagsDir();
+	}
+});
+
+watchEffect(() => {
+	if (!forbiddenRegex.test(dataInput.value) && dataInput.value !== '') {
+		errorData.value = 'Разрешены только символы, кроме букв, цифр и знаков - * \\';
+	} else {
+		errorData.value = '';
 	}
 });
 </script>

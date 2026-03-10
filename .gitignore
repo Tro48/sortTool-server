@@ -141,4 +141,4 @@ dist
 .DS_Store?
 
 
-backend/db/
+backend/db/*
