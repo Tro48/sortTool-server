@@ -128,8 +128,10 @@ export async function copyFile(
 	path: string,
 	io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, unknown>,
 ) {
-	const { settingsData } = getDb();
 	const fileName = getFileName(path);
+	const fileFormat = fileName.split('.');
+	if (fileFormat[fileFormat.length - 1] !== 'pdf') return;
+	const { settingsData } = getDb();
 	if (settingsData.ignoredNames.includes(fileName)) return;
 	const newFileDir = calculateNewDir(path);
 	if (newFileDir) {
