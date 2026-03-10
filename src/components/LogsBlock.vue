@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
-import { io } from 'socket.io-client';
 import { nextTick, onMounted, ref, watch } from 'vue';
 import { useLogs } from '../stores/useLogsStore';
+import { useSocket } from '../stores/useSettingsStore';
 import LogItem from './LogItem.vue';
-const baseUrl = `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_PORT}/`;
 
 const logsListRef = ref<HTMLUListElement | null>(null);
 
-const socket = io(baseUrl, { autoConnect: true });
 const logs = useLogs();
+const socket = useSocket();
 const { logsList } = storeToRefs(logs);
 
 async function scrollToBottom() {
@@ -21,10 +20,8 @@ async function scrollToBottom() {
 
 onMounted(() => {
 	logs.fetchGetAllLogs();
+	socket.onLog(logs.setLogItem);
 	scrollToBottom();
-	socket.on('log', (data) => {
-		logs.setLogItem(data);
-	});
 });
 
 watch(
@@ -70,15 +67,15 @@ watch(
 }
 
 .empty-message {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  inline-size: 100%;
-  block-size: 100%;
-  font-size: 18px;
-  font-weight: 600;
-  text-transform: uppercase;
-  color: var(--text-color-secondary);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	inline-size: 100%;
+	block-size: 100%;
+	font-size: 18px;
+	font-weight: 600;
+	text-transform: uppercase;
+	color: var(--text-color-secondary);
 }
 
 .log-name {

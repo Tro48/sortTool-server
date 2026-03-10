@@ -1,6 +1,8 @@
-import type { SettingsFileData } from '@/types/types';
+import type { ILogItem, SettingsFileData } from '@/types/types';
 import { defineStore } from 'pinia';
+import { io } from 'socket.io-client';
 const apiUrl = `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_PORT}/api/`;
+const baseUrl = `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_PORT}/`;
 
 interface ISettingsState {
 	ignoredChars: { id: string; value: string }[];
@@ -286,3 +288,21 @@ export const useSettings = defineStore('settingsStore', {
 		},
 	},
 });
+
+export const useSocket = defineStore('socket', {
+	state: () => ({
+		socket : io(baseUrl, { autoConnect: true })
+	}),
+	actions: {
+		onLog(cb:(log: ILogItem) => void){
+			this.socket.on('log', (data) => {
+				cb(data);
+			});
+		},
+		onNewFolder(cb:() => void){
+			this.socket.on('newFolderAadd', (data) => {
+				cb();
+			});
+		}
+	}
+})

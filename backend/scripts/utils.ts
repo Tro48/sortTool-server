@@ -1,7 +1,7 @@
 import fs from 'fs';
 import os from 'os';
 import { DefaultEventsMap, Server } from 'socket.io';
-import { SettingsFileData, UseLogs } from '../../src/types/types';
+import { SettingsFileData } from '../../src/types/types';
 const platform = os.platform();
 const escapeRegExp = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const settingsDir = 'backend/db/settings.json';
@@ -38,7 +38,7 @@ const sendLog = (
 export const getFileName = (dir: string) =>
 	dir.split(platform === 'win32' ? '\\' : '/').slice(-1)[0];
 
-export const getDb = (): { settingsData: SettingsFileData; logsData: UseLogs } => {
+export const getDb = (): { settingsData: SettingsFileData; logsData: Record<string, string> } => {
 	let settingsData: SettingsFileData = {
 		foldersDir: '',
 		ignoredChars: [],
@@ -48,9 +48,7 @@ export const getDb = (): { settingsData: SettingsFileData; logsData: UseLogs } =
 		ignoredNames: [],
 	};
 
-	let logsData: UseLogs = {
-		logsList: new Map(),
-	};
+	let logsData = {};
 	try {
 		if (fs.existsSync(settingsDir)) {
 			const settingsFile = fs.readFileSync(settingsDir, 'utf-8');

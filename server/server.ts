@@ -31,6 +31,18 @@ if (!settingsData.foldersDir || !settingsData.listenDir) {
 } else {
 	checkerFolder.setNewDir(settingsData.listenDir);
 	checkerFolder.start();
+	fs.watch(settingsData.foldersDir, (evt, fileName) => {
+		if (evt === 'rename' && fileName) {
+			const fullPath = path.join(settingsData.foldersDir, fileName);
+
+			// Проверяем, существует ли объект и является ли он папкой
+			fs.stat(fullPath, (err, stats) => {
+				if (!err && stats.isDirectory()) {
+					io.emit('newFolderAadd', {newFolder:true});
+				}
+			});
+		}
+	});
 }
 
 const settingsKeys = {

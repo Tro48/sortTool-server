@@ -1,34 +1,35 @@
 <script setup lang="ts">
-import { useSettings } from '@/stores/useSettingsStore';
+import { useSettings, useSocket } from '@/stores/useSettingsStore';
 import { storeToRefs } from 'pinia';
 import { onMounted, ref } from 'vue';
 import VueSelect from 'vue3-select-component';
 
+const socket = useSocket();
+
 const props = defineProps<{
-  modelValue: { type: string, default: '' };
+	modelValue: { type: string; default: '' };
 	customClass?: string;
 }>();
 
 const selected = ref('');
 
-const model = defineModel()
+const model = defineModel();
 
-const emit = defineEmits(['update:modelValue', 'input', 'change'])
+const emit = defineEmits(['update:modelValue', 'input', 'change']);
 
 function onInput(e: Event) {
-  const val = (e.target as HTMLInputElement).value
-  emit('update:modelValue', val)
-  emit('input', val)
+	const val = (e.target as HTMLInputElement).value;
+	emit('update:modelValue', val);
+	emit('input', val);
 }
 
 const settings = useSettings();
-const { folders, getFolders, pendingFolders } = storeToRefs(settings);
+const { getFolders, pendingFolders } = storeToRefs(settings);
 
 onMounted(() => {
 	settings.fetchAllFolders();
+	socket.onNewFolder(settings.fetchAllFolders);
 });
-
-
 </script>
 <template>
 	<VueSelect
@@ -36,14 +37,14 @@ onMounted(() => {
 		class="search-input"
 		v-model="selected"
 		:options="getFolders"
-    @input="onInput"
+		@input="onInput"
 	/>
 	<VueSelect
 		v-else-if="getFolders"
 		class="search-input"
 		v-model="model"
 		:options="getFolders"
-    @input="onInput"
+		@input="onInput"
 	/>
 </template>
 <style scoped>
