@@ -8,7 +8,7 @@
 		"playwright.config.*",
 		"eslint.config.*",
 		"backend/**/*",
-		"server/**/*"
+		"backend/server/**/*"
 	],
 	"compilerOptions": {
 		"noEmit": true,

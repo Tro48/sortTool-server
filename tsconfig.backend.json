@@ -1,0 +1,16 @@
+{
+  "extends": "@tsconfig/node24/tsconfig.json",
+  "compilerOptions": {
+    "outDir": "dist-server",
+    "module": "ESNext",
+    "moduleResolution": "Bundler", /* Разрешает импорты без расширений */
+    "target": "ES2021",
+    "lib": ["ES2021", "ESNext"],
+    "noEmit": false,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "allowImportingTsExtensions": false,
+    "rootDir": "."
+  },
+  "include": ["backend/**/*"]
+}

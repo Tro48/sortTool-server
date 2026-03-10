@@ -6,10 +6,10 @@ interface BaseProps {
 	req?: Request;
 	res?: Response;
 	settingsType: string;
-	settingsFileDir: string;
+	settingsDir: string;
 }
 
-export const setSettings = ({ req, res, settingsType, settingsFileDir }: BaseProps) => {
+export const setSettings = ({ req, res, settingsType, settingsDir }: BaseProps) => {
 	const settingsItem = { ...req?.body };
 	if (!settingsItem) return res?.status(500).json({ error: 'Нет данных для добавления' });
 	let newSettingsItem: Record<string, unknown> = {};
@@ -23,7 +23,7 @@ export const setSettings = ({ req, res, settingsType, settingsFileDir }: BasePro
 		};
 	}
 
-	fs.readFile(settingsFileDir, 'utf8', (err, data) => {
+	fs.readFile(settingsDir, 'utf8', (err, data) => {
 		if (err) {
 			res?.status(500).send('Ошибка чтения файла настроек');
 			return;
@@ -44,7 +44,7 @@ export const setSettings = ({ req, res, settingsType, settingsFileDir }: BasePro
 		} else {
 			settings[settingsType].push(newSettingsItem);
 		}
-		fs.writeFile(settingsFileDir, JSON.stringify(settings), 'utf8', (err) => {
+		fs.writeFile(settingsDir, JSON.stringify(settings), 'utf8', (err) => {
 			if (err) {
 				res?.status(501).send('Ошибка записи файла настроек');
 				return;
@@ -54,8 +54,8 @@ export const setSettings = ({ req, res, settingsType, settingsFileDir }: BasePro
 	});
 };
 
-export const getSettings = ({ res, settingsType, settingsFileDir }: BaseProps) => {
-	fs.readFile(settingsFileDir, 'utf8', (err, data) => {
+export const getSettings = ({ res, settingsType, settingsDir }: BaseProps) => {
+	fs.readFile(settingsDir, 'utf8', (err, data) => {
 		if (err) {
 			console.error(err);
 			res?.status(500).send('Ошибка чтения файла настроек');
@@ -66,10 +66,10 @@ export const getSettings = ({ res, settingsType, settingsFileDir }: BaseProps) =
 	});
 };
 
-export const deleteSettings = ({ req, res, settingsType, settingsFileDir }: BaseProps) => {
+export const deleteSettings = ({ req, res, settingsType, settingsDir }: BaseProps) => {
 	const { id } = { ...req?.body };
 	if (!id) return res?.status(400).json({ error: 'Нет ID для удаления' });
-	fs.readFile(settingsFileDir, 'utf8', (err, data) => {
+	fs.readFile(settingsDir, 'utf8', (err, data) => {
 		if (err) {
 			res?.status(500).send('Ошибка чтения файла настроек');
 			return;
@@ -88,7 +88,7 @@ export const deleteSettings = ({ req, res, settingsType, settingsFileDir }: Base
 			}
 			settings[settingsType] = settings[settingsType].filter((item: Record<string, string>) => item.id !== id);
 		}
-		fs.writeFile(settingsFileDir, JSON.stringify(settings), 'utf8', (err) => {
+		fs.writeFile(settingsDir, JSON.stringify(settings), 'utf8', (err) => {
 			if (err) {
 				res?.status(501).send('Ошибка записи файла настроек');
 				return;

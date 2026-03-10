@@ -5,17 +5,22 @@ import fs from 'fs';
 import http from 'http';
 import path from 'path';
 import { Server } from 'socket.io';
-import { CheckerFiles } from '../backend/scripts/checkerFiles';
-import { delayedClear } from '../backend/scripts/clearLog';
-import { getDb } from '../backend/scripts/utils';
+import { CheckerFiles } from '../scripts/checkerFiles';
+import { delayedClear } from '../scripts/clearLog';
+import { getDb, logsDir, settingsDir } from '../scripts/utils';
 import { deleteSettings, getSettings, setSettings } from './methods';
+import { fileURLToPath } from 'url';
+// Эмуляция __dirname для ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const distPath = typeof process.pkg !== 'undefined'
+  ? path.join(__dirname, '../../dist_bundled')
+  : 'dist';
 dotenv.config();
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: '*' } });
-const port = process.env.VITE_PORT;
-const settingsFileDir = 'backend/db/settings.json';
-const logsDir = 'backend/db/logs.json';
+const port = Number(process.env.VITE_PORT) || 3000;
 const checkerFolder = new CheckerFiles(io);
 const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
 delayedClear(logsDir, THREE_DAYS_MS);
@@ -38,7 +43,7 @@ if (!settingsData.foldersDir || !settingsData.listenDir) {
 			// Проверяем, существует ли объект и является ли он папкой
 			fs.stat(fullPath, (err, stats) => {
 				if (!err && stats.isDirectory()) {
-					io.emit('newFolderAadd', {newFolder:true});
+					io.emit('newFolderAadd', { newFolder: true });
 				}
 			});
 		}
@@ -54,7 +59,7 @@ const settingsKeys = {
 	listenDir: 'listenDir',
 };
 
-app.use(express.static('dist'));
+app.use(express.static(distPath));
 app.use(cors());
 app.use(express.json());
 
@@ -78,7 +83,7 @@ app.post('/api/settings/setFoldersDir', (req, res) => {
 		foldersDir: settingsItem.foldersDir,
 		listenDir: settingsItem.listenDir,
 	};
-	fs.writeFile(settingsFileDir, JSON.stringify(newSettings), 'utf8', (err) => {
+	fs.writeFile(settingsDir, JSON.stringify(newSettings), 'utf8', (err) => {
 		if (err) {
 			res?.status(501).send('Ошибка записи файла настроек');
 			return;
@@ -88,7 +93,7 @@ app.post('/api/settings/setFoldersDir', (req, res) => {
 });
 
 app.get('/api/folders', (_, res) => {
-	const _settings = JSON.parse(fs.readFileSync(settingsFileDir, 'utf-8'));
+	const _settings = JSON.parse(fs.readFileSync(settingsDir, 'utf-8'));
 	if (!_settings.foldersDir) {
 		return res.status(500).json({ error: 'Путь к папкам не задан' });
 	} else {
@@ -122,14 +127,14 @@ app.get('/api/separators', (_, res) =>
 	getSettings({
 		res,
 		settingsType: settingsKeys.separators,
-		settingsFileDir,
+		settingsDir,
 	}),
 );
 app.get('/api/ignoredChars', (_, res) =>
 	getSettings({
 		res,
 		settingsType: settingsKeys.ignoredChars,
-		settingsFileDir,
+		settingsDir,
 	}),
 );
 app.get('/api/logs', (_, res) =>
@@ -143,18 +148,18 @@ app.get('/api/logs', (_, res) =>
 	}),
 );
 app.get('/api/tagsDir', (_, res) =>
-	getSettings({ res, settingsType: settingsKeys.tagsDir, settingsFileDir }),
+	getSettings({ res, settingsType: settingsKeys.tagsDir, settingsDir }),
 );
 app.post('/api/separators/set/', (req, res) => {
 	const dataReq = { ...req?.body };
-	fs.readFile(settingsFileDir, 'utf8', (err, data) => {
+	fs.readFile(settingsDir, 'utf8', (err, data) => {
 		if (err) {
 			res?.status(500).send('Ошибка чтения файла настроек');
 			return;
 		}
 		const settings = JSON.parse(data);
 		settings.separators = dataReq.value;
-		fs.writeFile(settingsFileDir, JSON.stringify(settings), 'utf8', (err) => {
+		fs.writeFile(settingsDir, JSON.stringify(settings), 'utf8', (err) => {
 			if (err) {
 				res?.status(501).send('Ошибка записи файла настроек');
 				return;
@@ -168,12 +173,12 @@ app.post('/api/ignoredChars/set/', (req, res) =>
 		req,
 		res,
 		settingsType: settingsKeys.ignoredChars,
-		settingsFileDir,
+		settingsDir,
 	}),
 );
 
 app.post('/api/tagsDir/set/', (req, res) =>
-	setSettings({ req, res, settingsType: settingsKeys.tagsDir, settingsFileDir }),
+	setSettings({ req, res, settingsType: settingsKeys.tagsDir, settingsDir }),
 );
 
 app.delete('/api/tagsDir/delete/', (req, res) =>
@@ -181,21 +186,21 @@ app.delete('/api/tagsDir/delete/', (req, res) =>
 		req,
 		res,
 		settingsType: settingsKeys.tagsDir,
-		settingsFileDir,
+		settingsDir,
 	}),
 );
 
 app.delete('/api/separators/delete/', (req, res) => {
 	const { id } = { ...req?.body };
 	if (!id) return res?.status(400).json({ error: 'Нет ID для удаления' });
-	fs.readFile(settingsFileDir, 'utf8', (err, data) => {
+	fs.readFile(settingsDir, 'utf8', (err, data) => {
 		if (err) {
 			res?.status(500).send('Ошибка чтения файла настроек');
 			return;
 		}
 		const settings = JSON.parse(data);
 		settings.separators = '';
-		fs.writeFile(settingsFileDir, JSON.stringify(settings), 'utf8', (err) => {
+		fs.writeFile(settingsDir, JSON.stringify(settings), 'utf8', (err) => {
 			if (err) {
 				res?.status(501).send('Ошибка записи файла настроек');
 				return;
@@ -210,13 +215,13 @@ app.delete('/api/ignoredChars/delete/', (req, res) =>
 		req,
 		res,
 		settingsType: settingsKeys.ignoredChars,
-		settingsFileDir,
+		settingsDir,
 	}),
 );
 
 app.post('/api/settings/upload', (req, res) => {
 	const data = { ...req.body };
-	fs.writeFile(settingsFileDir, JSON.stringify(data), 'utf8', (err) => {
+	fs.writeFile(settingsDir, JSON.stringify(data), 'utf8', (err) => {
 		if (err) {
 			console.error('Ошибка записи файла:', err);
 			return res.status(500).json({ error: 'Ошибка записи файла' });
@@ -226,7 +231,7 @@ app.post('/api/settings/upload', (req, res) => {
 });
 
 app.get('/api/settings/download', (_, res) => {
-	res.download(settingsFileDir, 'settings.json', (err) => {
+	res.download(settingsDir, 'settings.json', (err) => {
 		if (err) {
 			console.error('Ошибка отправки файла:', err);
 			res.status(500).json({ error: 'Ошибка отправки файла' });
@@ -234,7 +239,7 @@ app.get('/api/settings/download', (_, res) => {
 	});
 });
 
-server.listen(port, () => {
+server.listen(port, '0.0.0.0', () => {
 	console.log(`Example app listening on port ${port}`);
 });
 

@@ -1,12 +1,21 @@
 import fs from 'fs';
 import os from 'os';
+import path from 'path';
 import { DefaultEventsMap, Server } from 'socket.io';
 import { SettingsFileData } from '../../src/types/types';
+const rootDir = process.pkg ? path.dirname(process.execPath) : process.cwd();
+
+export const settingsDir = process.pkg
+	? path.join(rootDir, 'settings.json')
+	: path.resolve(rootDir, './backend/settings.json');
+
+export const logsDir = process.pkg
+	? path.join(rootDir, 'logs.json')
+	: path.resolve(rootDir, './backend/logs.json');
+
+const messageStore = new Map();
 const platform = os.platform();
 const escapeRegExp = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-const settingsDir = 'backend/db/settings.json';
-const logsDir = 'backend/db/logs.json';
-const messageStore = new Map();
 
 const sendLog = (
 	message: string,

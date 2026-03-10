@@ -301,7 +301,7 @@ export const useSocket = defineStore('socket', {
 			});
 		},
 		onNewFolder(cb: () => void) {
-			this.socket.on('newFolderAadd', (data) => {
+			this.socket.on('newFolderAadd', (_) => {
 				cb();
 			});
 		},
