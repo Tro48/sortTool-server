@@ -8,7 +8,7 @@ import { Server } from 'socket.io';
 import { fileURLToPath } from 'url';
 import { CheckerFiles } from '../scripts/checkerFiles';
 import { delayedClear } from '../scripts/clearLog';
-import { configPath, getDb, logsDir, settingsDir } from '../scripts/utils';
+import { configPath, getDb, logsDir, settingsDir, watchNewFolder } from '../scripts/utils';
 import { deleteSettings, getSettings, setSettings } from './methods';
 // Эмуляция __dirname для ES Modules
 const __filename = fileURLToPath(import.meta.url);
@@ -43,18 +43,7 @@ if (!settingsData.foldersDir || !settingsData.listenDir) {
 } else {
 	checkerFolder.setNewDir(settingsData.listenDir);
 	checkerFolder.start();
-	fs.watch(settingsData.foldersDir, (evt, fileName) => {
-		if (evt === 'rename' && fileName) {
-			const fullPath = path.join(settingsData.foldersDir, fileName);
-
-			// Проверяем, существует ли объект и является ли он папкой
-			fs.stat(fullPath, (err, stats) => {
-				if (!err && stats.isDirectory()) {
-					io.emit('newFolderAadd', { newFolder: true });
-				}
-			});
-		}
-	});
+	watchNewFolder(settingsData, io)
 }
 
 const settingsKeys = {
@@ -75,10 +64,7 @@ app.get('/api/settings/status', (_, res) => {
 	if (!settingsData.foldersDir || !settingsData.listenDir) {
 		return res.status(400).json({ state: false, error: 'Missing foldersDir or listenDir' });
 	}
-	res.json({
-		state: true,
-		settings: { foldersDir: settingsData.foldersDir, listenDir: settingsData.listenDir },
-	});
+	res.send('ok');
 });
 
 app.post('/api/settings/setFoldersDir', (req, res) => {
@@ -96,6 +82,10 @@ app.post('/api/settings/setFoldersDir', (req, res) => {
 			return;
 		}
 		res?.status(201).send(JSON.stringify(newSettings));
+		const { settingsData } = getDb();
+		checkerFolder.setNewDir(settingsData.listenDir);
+		checkerFolder.start();
+		watchNewFolder(settingsData, io)
 	});
 });
 

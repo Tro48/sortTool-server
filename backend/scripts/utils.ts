@@ -48,6 +48,24 @@ const sendLog = (
 	}
 };
 
+export const watchNewFolder = (
+	settingsData: SettingsFileData,
+	io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, unknown>,
+) => {
+	fs.watch(settingsData.foldersDir, (evt, fileName) => {
+		if (evt === 'rename' && fileName) {
+			const fullPath = path.join(settingsData.foldersDir, fileName);
+
+			// Проверяем, существует ли объект и является ли он папкой
+			fs.stat(fullPath, (err, stats) => {
+				if (!err && stats.isDirectory()) {
+					io.emit('newFolderAadd', { newFolder: true });
+				}
+			});
+		}
+	});
+};
+
 export const getFileName = (dir: string) =>
 	dir.split(platform === 'win32' ? '\\' : '/').slice(-1)[0];
 

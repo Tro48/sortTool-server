@@ -45,6 +45,7 @@ const tagsEntries = computed(() => {
 					<span>{{ value }}</span>
 					<ButtonUi
 						type="button"
+						:disabled="true"
 						@click="settings.removeTagItem(key)"
 						customClass="delete-button"
 						tooltip="Удалить цветовую схему"

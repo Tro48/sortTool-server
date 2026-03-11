@@ -253,8 +253,11 @@ export const useSettings = defineStore('settingsStore', {
 		async fetchSettingsDirState() {
 			try {
 				const response = await fetch('/api/settings/status', { method: 'GET' });
-				const data = await response.json();
-				this.isSettingsDirState = data.state;
+				if (response.ok) {
+					this.isSettingsDirState = true;
+				} else {
+					this.isSettingsDirState = false;
+				}
 			} catch (error) {
 				console.error('Ошибка:', error);
 			}
@@ -305,11 +308,11 @@ export const useSocket = defineStore('socket', {
 		},
 		onScriptListenerState() {
 			this.socket.on('scriptStart', (data) => {
-				console.log(data)
+				console.log(data);
 				this.scriptState = data;
 			});
 			this.socket.on('scriptStop', (data) => {
-				console.log(data)
+				console.log(data);
 				this.scriptState = data;
 			});
 		},
