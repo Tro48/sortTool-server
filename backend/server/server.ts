@@ -1,4 +1,6 @@
 import cors from 'cors';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
 import dotenv from 'dotenv';
 import express from 'express';
 import fs from 'fs';
@@ -7,12 +9,11 @@ import path from 'path';
 import { Server } from 'socket.io';
 import { fileURLToPath } from 'url';
 import { CheckerFiles } from '../scripts/checkerFiles';
-import { delayedClear } from '../scripts/clearLog';
 import { configPath, getDb, logsDir, settingsDir, watchNewFolder } from '../scripts/utils';
 import { deleteSettings, getSettings, setSettings } from './methods';
 // Эмуляция __dirname для ES Modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
 const distPath =
 	typeof process.pkg !== 'undefined' ? path.join(__dirname, '../dist_bundled') : 'dist';
 let serverConfig = { PORT: 5050, API_URL: 'http://localhost', HOST: '0.0.0.0' };
@@ -29,8 +30,6 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: '*' } });
 const checkerFolder = new CheckerFiles(io);
-const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
-delayedClear(logsDir, THREE_DAYS_MS);
 
 const { settingsData } = getDb();
 

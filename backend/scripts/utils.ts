@@ -126,7 +126,7 @@ export const calculateNewDir = (dir: string): string => {
 				settings.foldersDir +
 				settings.tagsDir[tag] +
 				separatorDir +
-				fileName.replaceAll(' ', separator);
+				fileName.replace(/ /g, separator);
 		} else if (arrTag.length > 1) {
 			tag = arrTag.join(separator);
 			if (settings.tagsDir[tag]) {
@@ -134,7 +134,7 @@ export const calculateNewDir = (dir: string): string => {
 					settings.foldersDir +
 					settings.tagsDir[tag] +
 					separatorDir +
-					fileName.replaceAll(' ', separator);
+					fileName.replace(/ /g, separator);
 			} else {
 				tag = arrTag.reverse().join(separator);
 				console.log(tag);
@@ -142,7 +142,7 @@ export const calculateNewDir = (dir: string): string => {
 					settings.foldersDir +
 					settings.tagsDir[tag] +
 					separatorDir +
-					fileName.replaceAll(' ', separator);
+					fileName.replace(/ /g, separator);
 			}
 		} else {
 			newDir = '';
