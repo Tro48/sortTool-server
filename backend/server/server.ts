@@ -16,7 +16,7 @@ const __dirname = path.dirname(__filename);
 const distPath =
 	typeof process.pkg !== 'undefined' ? path.join(__dirname, '../dist_bundled') : 'dist';
 const serverIp = typeof process.pkg !== 'undefined' ? '0.0.0.0' : '';
-let serverConfig = { PORT: 5050, API_URL: 'http://localhost:3000' };
+let serverConfig = { PORT: 5050, API_URL: 'http://localhost' };
 if (fs.existsSync(configPath)) {
 	try {
 		serverConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
@@ -31,9 +31,6 @@ const io = new Server(server, { cors: { origin: '*' } });
 const checkerFolder = new CheckerFiles(io);
 const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
 delayedClear(logsDir, THREE_DAYS_MS);
-io.on('connection', (_socket) => {
-	console.log('Фронтенд подключился');
-});
 
 const { settingsData } = getDb();
 
@@ -43,7 +40,7 @@ if (!settingsData.foldersDir || !settingsData.listenDir) {
 } else {
 	checkerFolder.setNewDir(settingsData.listenDir);
 	checkerFolder.start();
-	watchNewFolder(settingsData, io)
+	watchNewFolder(settingsData, io);
 }
 
 const settingsKeys = {
@@ -85,7 +82,7 @@ app.post('/api/settings/setFoldersDir', (req, res) => {
 		const { settingsData } = getDb();
 		checkerFolder.setNewDir(settingsData.listenDir);
 		checkerFolder.start();
-		watchNewFolder(settingsData, io)
+		watchNewFolder(settingsData, io);
 	});
 });
 
