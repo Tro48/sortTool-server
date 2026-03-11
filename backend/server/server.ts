@@ -15,8 +15,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const distPath =
 	typeof process.pkg !== 'undefined' ? path.join(__dirname, '../dist_bundled') : 'dist';
-const serverIp = typeof process.pkg !== 'undefined' ? '0.0.0.0' : '';
-let serverConfig = { PORT: 5050, API_URL: 'http://localhost' };
+let serverConfig = { PORT: 5050, API_URL: 'http://localhost', HOST: '0.0.0.0' };
 if (fs.existsSync(configPath)) {
 	try {
 		serverConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
@@ -24,6 +23,7 @@ if (fs.existsSync(configPath)) {
 		console.error('Ошибка чтения config.json, используем дефолты', error);
 	}
 }
+const serverIp = typeof process.pkg !== 'undefined' ? serverConfig.HOST : '';
 dotenv.config();
 const app = express();
 const server = http.createServer(app);
