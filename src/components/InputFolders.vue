@@ -58,8 +58,8 @@ onMounted(() => {
 	--vs-option-selected-background-color: var(--active);
 	--vs-option-hover-background-color: var(--hover-page);
 	--vs-border: none;
-	--vs-padding: 4px;
-	--vs-option-padding: 4px;
-	--vs-font-size: 14px;
+	--vs-padding: var(--padding-page);
+	--vs-option-padding: var(--padding-page);
+	--vs-font-size: var(--font-size-normal);
 }
 </style>

@@ -154,18 +154,18 @@ watchEffect(() => {
 .input-header {
 	display: flex;
 	align-items: center;
-	gap: 5px;
-	inline-size: 100%;
+	gap: var(--gap-page);
+	inline-size: var(--inline-size-full);
 	min-block-size: 30px;
-	font-size: 16px;
-	font-weight: 600;
+	font-size: var(--font-size-medium);
+	font-weight: var(--font-weight-bold);
 }
 .input-group {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	inline-size: 100%;
-	gap: 5px;
+	inline-size: var(--inline-size-full);
+	gap: var(--gap-page);
 }
 
 .input-group-tag {
@@ -175,8 +175,8 @@ watchEffect(() => {
 .input-group-tag-button-block {
 	display: flex;
 	align-items: center;
-	gap: 5px;
+	gap: var(--gap-page);
 	justify-content: space-between;
-	inline-size: 100%;
+	inline-size: var(--inline-size-full);
 }
 </style>

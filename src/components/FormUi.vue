@@ -17,7 +17,7 @@ const { handler, typeForm } = props;
 	flex-direction: column;
 	justify-content: space-between;
 	align-items: flex-end;
-	gap: 5px;
+	gap: var(--gap-page);
 }
 
 .form.form-tag {

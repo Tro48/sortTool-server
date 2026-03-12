@@ -71,11 +71,11 @@ async function onChange(e: Event) {
 	display: flex;
 	justify-content: end;
 	align-items: center;
-	gap: 5px;
-	inline-size: 100%;
-	padding: 5px;
+	gap: var(--gap-page);
+	inline-size: var(--inline-size-full);
+	padding: var(--padding-page);
 	background-color: var(--bg-color-section);
-	border-radius: 5px;
-	box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+	border-radius: var(--br-page);
+	box-shadow: var(--shadow);
 }
 </style>

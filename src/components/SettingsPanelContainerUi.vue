@@ -9,7 +9,11 @@ const { type } = props;
 	<div
 		:class="[
 			'settings-block',
-			{ 'settings-block-tag': type === 'tagsInput', 'tag-list-block': type === 'tagsList', 'settings-block-default': type === 'default' },
+			{
+				'settings-block-tag': type === 'tagsInput',
+				'tag-list-block': type === 'tagsList',
+				'settings-block-default': type === 'default',
+			},
 		]"
 	>
 		<slot></slot>
@@ -19,22 +23,22 @@ const { type } = props;
 .settings-block {
 	display: flex;
 	flex-direction: column;
-	gap: 5px;
-	inline-size: 100%;
-	padding: 10px 10px 30px 10px;
+	gap: var(--gap-page);
+	inline-size: var(--inline-size-full);
+	padding: var(--padding-settings-block);
 	border: 1px solid var(--bg-color);
-	box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-	border-radius: 5px;
+	box-shadow: var(--shadow);
+	border-radius: var(--br-page);
 	background-color: var(--bg-color-section);
 }
 
 .settings-block-default {
-  padding: 10px;
+	padding: calc(var(--padding-page) * 2);
 }
 
 .tag-list-block {
 	overflow: hidden;
-	padding: 5px;
+	padding: var(--padding-page);
 }
 
 .settings-block.settings-block-tag {

@@ -6,4 +6,26 @@
     --active: #0096d6;
     --hover-menu-button: #BBEDFF;
     --hover-page: #cccccc;
+    --columns-logs: 25% 15% 60%;
+    --inline-size-full: 100%;
+    --font-size-big: 18px;
+    --font-size-medium: 16px;
+    --font-size-normal: 14px;
+    --font-size-small: 12px;
+    --font-weight-normal: 400;
+    --font-weight-bold: 600;
+    --shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    --gap-page: 5px;
+    --br-page: 5px;
+    --padding-input: 8px;
+    --padding-page: 5px;
+    --padding-settings-dir-page: 25%;
+    --padding-settings-block: 10px 10px 30px 10px;
+}
+
+
+@media screen and (max-width: 768px) {
+	:root {
+        --columns-logs: 15% 15% 70%;
+    }
 }

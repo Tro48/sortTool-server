@@ -65,15 +65,15 @@ const tagsEntries = computed(() => {
 	display: flex;
 	flex-direction: column;
 	justify-content: start;
-	gap: 5px;
-	inline-size: 100%;
+	gap: var(--gap-page);
+	inline-size: var(--inline-size-full);
 	block-size: 100%;
 }
 
 .settings-blocks-container {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
-	gap: 5px;
+	gap: var(--gap-page);
 }
 
 .tag-list-block {
@@ -81,43 +81,44 @@ const tagsEntries = computed(() => {
 	flex-direction: column;
 	block-size: 100%;
 	overflow: hidden;
-	gap: 5px;
-	padding: 5px;
+	gap: var(--gap-page);
+	padding: var(--padding-page);
 	background-color: var(--bg-color-section);
-	box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-	border-radius: 5px;
+	box-shadow: var(--shadow);
+	border-radius: var(--br-page);
 }
 
 .tag-list-header-block {
 	display: flex;
 	align-items: center;
-	padding: 5px;
-	gap: 5px;
+	justify-content: space-between;
+	padding: var(--padding-page);
+	gap: var(--gap-page);
 }
 
 .empty-message {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	inline-size: 100%;
+	inline-size: var(--inline-size-full);
 	block-size: 100%;
 	border: 1px solid var(--bg-color);
-	border-radius: 5px;
+	border-radius: var(--br-page);
 	color: var(--text-color);
-	font-size: 14px;
+	font-size: var(--font-size-normal);
 }
 
 .tag-list {
 	display: flex;
 	flex-direction: column;
-	padding: 5px;
-	gap: 5px;
-	inline-size: 100%;
+	padding: var(--padding-page);
+	gap: var(--gap-page);
+	inline-size: var(--inline-size-full);
 	block-size: 100%;
 	overflow-y: auto;
 	scroll-behavior: smooth;
 	border: 1px solid var(--bg-color);
-	border-radius: 5px;
+	border-radius: var(--br-page);
 	scrollbar-width: thin;
 }
 
@@ -125,16 +126,16 @@ const tagsEntries = computed(() => {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	gap: 5px;
-	inline-size: 100%;
-	padding: 5px;
+	gap: var(--gap-page);
+	inline-size: var(--inline-size-full);
+	padding: var(--padding-page);
 	border: 1px solid var(--bg-color);
-	border-radius: 5px;
+	border-radius: var(--br-page);
 	cursor: pointer;
 	transition: background-color 0.3s ease;
 }
 .tag-list-item > span {
-	inline-size: 100%;
+	inline-size: var(--inline-size-full);
 }
 
 .tag-list-item:nth-child(2n) {

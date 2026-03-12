@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useSettings } from '@/stores/useSettingsStore';
-import { storeToRefs } from 'pinia';
 import { ref, watchEffect } from 'vue';
 import { useRouter } from 'vue-router';
 import ButtonUi from './ButtonUi.vue';
@@ -101,14 +100,14 @@ const handler = async () => {
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	gap: 5px;
-	padding: 25%;
-	inline-size: 100%;
+	gap: var(--gap-page);
+	padding: var(--padding-settings-dir-page);
+	inline-size: var(--inline-size-full);
 	block-size: 90vh;
 }
 
 .title {
-	font-size: 18px;
+	font-size: var(--font-size-big);
 	color: var(--text-color);
 	text-align: center;
 }
@@ -121,7 +120,7 @@ const handler = async () => {
 }
 
 .download-settings-title {
-	font-size: 16px;
+	font-size: var(--font-size-medium);
 	color: var(--text-color);
 }
 
@@ -130,21 +129,21 @@ const handler = async () => {
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	gap: 10px;
+	gap: calc(var(--gap-page) * 2);
 	border: 1px solid var(--bg-color);
-	border-radius: 5px;
-	padding: 5px;
+	border-radius: var(--br-page);
+	padding: var(--padding-page);
 }
 
 .input-group {
 	display: flex;
-	inline-size: 100%;
+	inline-size: var(--inline-size-full);
 	flex-direction: column;
-	gap: 5px;
+	gap: var(--gap-page);
 }
 
 .input-group > label {
-	font-size: 14px;
+	font-size: var(--font-size-normal);
 	color: var(--text-color);
 }
 
@@ -152,9 +151,9 @@ const handler = async () => {
 	inline-size: fit-content;
 	background-color: var(--active);
 	color: var(--bg-color-section);
-	font-size: 14px;
-	padding: 5px;
-	border-radius: 5px;
+	font-size: var(--font-size-normal);
+	padding: var(--padding-page);
+	border-radius: var(--br-page);
 }
 
 .button:hover {

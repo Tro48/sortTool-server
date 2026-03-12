@@ -33,7 +33,7 @@ const props = defineProps({
 }
 
 .line {
-	border-radius: 5px;
+	border-radius: var(--br-page);
 }
 .avatar {
 	border-radius: 50%;

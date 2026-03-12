@@ -34,22 +34,22 @@ const count = computed(() => props.skeletonCount ?? 3);
 <style scoped>
 .data-list {
 	display: flex;
-	gap: 5px;
-  max-inline-size: 400px;
+	gap: var(--gap-page);
+	max-inline-size: 400px;
 }
 
 .data-item {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	inline-size: 30px;
 	block-size: 30px;
-	font-size: 12px;
-  font-weight: 400;
+	font-size: var(--font-size-small);
+	font-weight: var(--font-weight-normal);
 	background-color: var(--bg-color);
-	border-radius: 5px;
+	border-radius: var(--br-page);
 	cursor: pointer;
-  user-select: none;
+	user-select: none;
 	transition: background-color 0.3s;
 }
 

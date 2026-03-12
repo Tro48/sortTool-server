@@ -40,9 +40,8 @@ watch(
 			<span class="log-message">Сообщение</span>
 		</h4>
 		<div class="logs-list-container">
-			
 			<ul v-if="isLoading" class="logs-list" ref="logsListRef">
-				<Skeleton v-for="n in 21" :key="'skeleton-' + n"  />
+				<Skeleton v-for="n in 21" :key="'skeleton-' + n" />
 			</ul>
 			<ul v-else-if="logsList.size > 0" class="logs-list" ref="logsListRef">
 				<LogItem
@@ -60,14 +59,14 @@ watch(
 <style scoped>
 .section-header {
 	display: grid;
-	grid-template-columns: 25% 15% 60%;
-	gap: 5px;
-	inline-size: 100%;
-	padding: 10px;
+	grid-template-columns: var(--columns-logs);
+	gap: var(--gap-page);
+	inline-size: var(--inline-size-full);
+	padding: calc(var(--padding-page) * 2);
 	background-color: var(--bg-color-section);
-	box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-	border-radius: 5px;
-	font-size: 14px;
+	box-shadow: var(--shadow);
+	border-radius: var(--br-page);
+	font-size: var(--font-size-normal);
 	text-transform: uppercase;
 }
 
@@ -75,21 +74,24 @@ watch(
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	inline-size: 100%;
+	inline-size: var(--inline-size-full);
 	block-size: 100%;
-	font-size: 18px;
-	font-weight: 600;
+	font-size: var(--font-size-big);
+	font-weight: var(--font-weight-bold);
 	text-transform: uppercase;
 	color: var(--text-color-secondary);
 }
 
 .log-name {
 	border-right: 1px solid var(--bg-color);
+	overflow: hidden;
 }
 
 .log-state {
+	max-inline-size: fit-content;
 	justify-self: center;
 	border: none;
+	overflow: hidden;
 }
 .log-message {
 	padding-left: 5px;
@@ -101,32 +103,32 @@ watch(
 	flex-direction: column;
 	justify-content: start;
 	align-items: center;
-	gap: 5px;
-	inline-size: 100%;
+	gap: var(--gap-page);
+	inline-size: var(--inline-size-full);
 	block-size: 100%;
 }
 
 .logs-list-container {
-	inline-size: 100%;
+	inline-size: var(--inline-size-full);
 	block-size: 100%;
-	padding: 5px;
-	border-radius: 5px;
+	padding: var(--padding-page);
+	border-radius: var(--br-page);
 	background-color: var(--bg-color-section);
-	box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+	box-shadow: var(--shadow);
 	overflow-y: hidden;
 }
 
 .logs-list {
 	display: flex;
 	flex-direction: column;
-	gap: 5px;
-	inline-size: 100%;
+	gap: var(--gap-page);
+	inline-size: var(--inline-size-full);
 	block-size: 100%;
-	padding: 5px;
-	border-radius: 5px;
+	padding: var(--padding-page);
+	border-radius: var(--br-page);
 	overflow-y: auto;
 	scroll-behavior: smooth;
-	font-size: 14px;
+	font-size: var(--font-size-normal);
 	scrollbar-width: thin;
 }
 </style>

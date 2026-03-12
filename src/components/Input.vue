@@ -34,7 +34,7 @@ function onInput(e: Event) {
 			:type="type"
 			:placeholder="placeholder"
 			@input="onInput"
-			:class="['input', { 'input-error': !isValid && model}]"
+			:class="['input', { 'input-error': !isValid && model }]"
 			:maxlength="maxlength"
 		/>
 		<p class="input-error-message" v-if="!isValid">{{ errorMessage }}</p>
@@ -46,14 +46,14 @@ function onInput(e: Event) {
 	position: relative;
 	display: flex;
 	flex-direction: column;
-	inline-size: 100%;
+	inline-size: var(--inline-size-full);
 }
 
 .input {
 	background-color: var(--bg-color);
-	border-radius: 4px;
-	padding: 8px;
-	font-size: 14px;
+	border-radius: var(--br-page);
+	padding: var(--padding-input);
+	font-size: var(--font-size-normal);
 	width: 100%;
 }
 

@@ -27,15 +27,15 @@ const props = defineProps<{
 <style scoped>
 .log-item {
 	display: grid;
-	grid-template-columns: 25% 15% 60%;
+	grid-template-columns: var(--columns-logs);
 	align-items: center;
-	gap: 5px;
-	padding: 5px;
-	inline-size: 100%;
+	gap: var(--gap-page);
+	padding: var(--padding-page);
+	inline-size: var(--inline-size-full);
 	background-color: transparent;
 	transition: background-color 0.3s;
 	border: 1px solid var(--bg-color);
-	border-radius: 5px;
+	border-radius: var(--br-page);
 }
 
 .log-item:nth-child(2n) {
@@ -49,6 +49,7 @@ const props = defineProps<{
 	transition: background-color 0.3s;
 }
 .log-name {
+	overflow-wrap: break-word;
 	border-right: 1px solid var(--bg-color);
 }
 
