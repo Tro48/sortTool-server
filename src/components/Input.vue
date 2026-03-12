@@ -34,7 +34,7 @@ function onInput(e: Event) {
 			:type="type"
 			:placeholder="placeholder"
 			@input="onInput"
-			:class="['input', { 'input-error': !isValid }]"
+			:class="['input', { 'input-error': !isValid && model}]"
 			:maxlength="maxlength"
 		/>
 		<p class="input-error-message" v-if="!isValid">{{ errorMessage }}</p>

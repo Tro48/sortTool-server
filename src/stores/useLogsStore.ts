@@ -5,15 +5,18 @@ import { BASE_URL } from './useSettingsStore';
 export const useLogs = defineStore('logs', {
 	state: (): UseLogs => ({
 		logsList: new Map(),
+		isLoading: true
 	}),
 	actions: {
 		async fetchGetAllLogs() {
+			this.isLoading = true
 			try {
 				const response = await fetch(BASE_URL + '/api/logs');
 				const data: { [key: string]: ILogItem } = await response.json();
 				Object.entries(data).forEach(([key, value]) => {
 					this.logsList.set(key, value);
 				});
+				this.isLoading = false
 			} catch (error) {
 				console.error(error);
 			}

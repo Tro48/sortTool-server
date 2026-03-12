@@ -4,12 +4,13 @@ import { nextTick, onMounted, ref, watch } from 'vue';
 import { useLogs } from '../stores/useLogsStore';
 import { useSocket } from '../stores/useSettingsStore';
 import LogItem from './LogItem.vue';
+import Skeleton from './Skeleton.vue';
 
 const logsListRef = ref<HTMLUListElement | null>(null);
 
 const logs = useLogs();
 const socket = useSocket();
-const { logsList } = storeToRefs(logs);
+const { logsList, isLoading } = storeToRefs(logs);
 
 async function scrollToBottom() {
 	await nextTick();
@@ -39,7 +40,11 @@ watch(
 			<span class="log-message">Сообщение</span>
 		</h4>
 		<div class="logs-list-container">
-			<ul v-if="logsList.size > 0" class="logs-list" ref="logsListRef">
+			
+			<ul v-if="isLoading" class="logs-list" ref="logsListRef">
+				<Skeleton v-for="n in 21" :key="'skeleton-' + n"  />
+			</ul>
+			<ul v-else-if="logsList.size > 0" class="logs-list" ref="logsListRef">
 				<LogItem
 					v-for="[key, value] in logsList"
 					:key="key"

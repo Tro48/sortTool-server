@@ -36,7 +36,9 @@ const tagsEntries = computed(() => {
 		<div class="tag-list-block">
 			<div class="tag-list-header-block">
 				<h3 class="input-header">Список цветовых схем:</h3>
-				<Input type="search" placeholder="Поиск" v-model="search" />
+				<div>
+					<Input type="search" placeholder="Поиск" v-model="search" />
+				</div>
 			</div>
 			<div v-if="tagsDir.size === 0" class="empty-message"><p>Тут пока ничего нет</p></div>
 			<ul v-else-if="tagsDir" class="tag-list">

@@ -16,4 +16,5 @@ export interface ILogItem {
 
 export interface UseLogs {
 	logsList: Map<string, ILogItem>;
+  isLoading: boolean
 }
