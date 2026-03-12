@@ -3,10 +3,11 @@ import ButtonUi from '@/components/ButtonUi.vue';
 import { useSettings } from '@/stores/useSettingsStore';
 import { type SettingsFileData } from '@/types/types';
 import { ref, toRef } from 'vue';
-
+import { useRouter } from 'vue-router';
+const router = useRouter();
 const props = defineProps({
-    isDownloadButton: { type: Boolean, default: false },
-    customClass: { type: String, default: '' },
+	isDownloadButton: { type: Boolean, default: false },
+	customClass: { type: String, default: '' },
 });
 const isDownloadButton = toRef(props, 'isDownloadButton');
 const customClass = toRef(props, 'customClass');
@@ -24,10 +25,12 @@ async function onChange(e: Event) {
 	if (!file) return;
 
 	const reader = new FileReader();
-	reader.onload = (e) => {
+	reader.onload = async (e) => {
 		try {
 			const data: SettingsFileData = JSON.parse(e.target?.result as string);
-			settings.fetchUploadSettings(data);
+			await settings.fetchUploadSettings(data);
+			await settings.fetchSettingsDirState();
+			router.push({ name: 'Home' });
 		} catch (error) {
 			console.error('Error parsing JSON:', error);
 		}
@@ -37,8 +40,8 @@ async function onChange(e: Event) {
 </script>
 
 <template>
-	<div class="settings-dw-block " :class="customClass">
-    <slot></slot>
+	<div class="settings-dw-block" :class="customClass">
+		<slot></slot>
 		<input
 			ref="inputRef"
 			class="visually-hidden"
@@ -54,7 +57,7 @@ async function onChange(e: Event) {
 			><v-icon>mdi-file-download-outline</v-icon></ButtonUi
 		>
 		<ButtonUi
-      v-if="isDownloadButton"
+			v-if="isDownloadButton"
 			type="button"
 			@click="settings.fetchDownloadSettings"
 			tooltip="Сохранить файл с настройками"

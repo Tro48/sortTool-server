@@ -1,12 +1,15 @@
 <script setup lang="ts">
+import { useSettings } from '@/stores/useSettingsStore';
+import { storeToRefs } from 'pinia';
 import { ref, watchEffect } from 'vue';
+import { useRouter } from 'vue-router';
 import ButtonUi from './ButtonUi.vue';
 import Input from './Input.vue';
 import SettingsPanelContainerUi from './SettingsPanelContainerUi.vue';
 import WorkingWithFiles from './WorkingWithFiles.vue';
-import { useSettings } from '@/stores/useSettingsStore';
 
 const settings = useSettings();
+const router = useRouter();
 
 const inputDataRootFolderDir = ref('');
 const inputDataListenFolderDir = ref('');
@@ -36,13 +39,19 @@ watchEffect(() => {
 	);
 });
 
-const handler = () => {
+const handler = async () => {
 	if (validateState.value) return;
 	const data = {
 		foldersDir: inputDataRootFolderDir.value,
 		listenDir: inputDataListenFolderDir.value,
 	};
-  settings.fetchAddFoldersDir(data);
+	try {
+		await settings.fetchAddFoldersDir(data);
+
+		router.push({ name: 'Home' });
+	} catch (error) {
+		console.error(error);
+	}
 };
 </script>
 <template>

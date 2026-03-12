@@ -1,6 +1,7 @@
 import type { ILogItem, SettingsFileData } from '@/types/types';
 import { defineStore } from 'pinia';
 import { io } from 'socket.io-client';
+export const BASE_URL = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_PORT}`: ''
 
 interface ISettingsState {
 	ignoredChars: { id: string; value: string }[];
@@ -40,7 +41,7 @@ export const useSettings = defineStore('settingsStore', {
 		async fetchIgnoredChars() {
 			this.pendingChars = true;
 			try {
-				const response = await fetch('/api/ignoredChars');
+				const response = await fetch(BASE_URL + '/api/ignoredChars');
 				this.ignoredChars = await response.json();
 			} catch (error) {
 				console.error('chars fetch error', error);
@@ -51,7 +52,7 @@ export const useSettings = defineStore('settingsStore', {
 		async fetchSeparators() {
 			this.pendingSep = true;
 			try {
-				const response = await fetch('/api/separators');
+				const response = await fetch(BASE_URL + '/api/separators');
 				const data = await response.json();
 				this.separators = [{ id: data, value: data }];
 			} catch (error) {
@@ -63,7 +64,7 @@ export const useSettings = defineStore('settingsStore', {
 		async fetchSetSeparator(sepData: string) {
 			this.pendingSep = true;
 			try {
-				const response = await fetch('/api/separators/set/', {
+				const response = await fetch(BASE_URL + '/api/separators/set/', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({ value: sepData }),
@@ -79,7 +80,7 @@ export const useSettings = defineStore('settingsStore', {
 		async fetchSetIgnoredChars(ignoredCharData: string) {
 			this.pendingChars = true;
 			try {
-				const response = await fetch('/api/ignoredChars/set/', {
+				const response = await fetch(BASE_URL + '/api/ignoredChars/set/', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({ value: ignoredCharData }),
@@ -95,7 +96,7 @@ export const useSettings = defineStore('settingsStore', {
 		async fetchAllTagsDir() {
 			this.pendingTagsDir = true;
 			try {
-				const response = await fetch('/api/tagsDir');
+				const response = await fetch(BASE_URL + '/api/tagsDir');
 				const data = await response.json();
 				this.tagsDir = new Map(
 					Object.entries(data).map(([key, value]) => [key, value as string]),
@@ -109,7 +110,7 @@ export const useSettings = defineStore('settingsStore', {
 		async fetchAllFolders() {
 			this.pendingFolders = true;
 			try {
-				const response = await fetch('/api/folders');
+				const response = await fetch(BASE_URL + '/api/folders');
 				if (response.ok) {
 					this.folders = await response.json();
 				} else {
@@ -124,7 +125,7 @@ export const useSettings = defineStore('settingsStore', {
 		async fetchSetTagsDir(tagsDirData: Map<string, string>) {
 			this.pendingTagsDir = true;
 			try {
-				const response = await fetch('/api/tagsDir/set/', {
+				const response = await fetch(BASE_URL + '/api/tagsDir/set/', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify(Object.fromEntries(tagsDirData)),
@@ -148,7 +149,7 @@ export const useSettings = defineStore('settingsStore', {
 		async removeTagItem(id: string) {
 			this.pendingTagsDir = true;
 			try {
-				const response = await fetch('/api/tagsDir/delete/', {
+				const response = await fetch(BASE_URL + '/api/tagsDir/delete/', {
 					method: 'DELETE',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({ id }),
@@ -165,7 +166,7 @@ export const useSettings = defineStore('settingsStore', {
 		async removeIgnoredItem(id: string) {
 			this.pendingChars = true;
 			try {
-				const response = await fetch('/api/ignoredChars/delete/', {
+				const response = await fetch(BASE_URL + '/api/ignoredChars/delete/', {
 					method: 'DELETE',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({ id }),
@@ -182,7 +183,7 @@ export const useSettings = defineStore('settingsStore', {
 		async removeSeparatorItem(id: string) {
 			this.pendingSep = true;
 			try {
-				const response = await fetch('/api/separators/delete/', {
+				const response = await fetch(BASE_URL + '/api/separators/delete/', {
 					method: 'DELETE',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({ id }),
@@ -199,7 +200,7 @@ export const useSettings = defineStore('settingsStore', {
 		async fetchUploadSettings(data: SettingsFileData) {
 			this.isUploadSettings = true;
 			try {
-				const response = await fetch('/api/settings/upload', {
+				const response = await fetch(BASE_URL + '/api/settings/upload', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify(data),
@@ -233,7 +234,7 @@ export const useSettings = defineStore('settingsStore', {
 		},
 		async fetchDownloadSettings() {
 			try {
-				const response = await fetch('/api/settings/download', { method: 'GET' });
+				const response = await fetch(BASE_URL + '/api/settings/download', { method: 'GET' });
 				if (!response.ok) {
 					throw new Error('Ошибка загрузки файла');
 				}
@@ -252,7 +253,7 @@ export const useSettings = defineStore('settingsStore', {
 		},
 		async fetchSettingsDirState() {
 			try {
-				const response = await fetch('/api/settings/status', { method: 'GET' });
+				const response = await fetch(BASE_URL + '/api/settings/status', { method: 'GET' });
 				if (response.ok) {
 					this.isSettingsDirState = true;
 				} else {
@@ -264,7 +265,7 @@ export const useSettings = defineStore('settingsStore', {
 		},
 		async fetchAddFoldersDir(foldersDirData: { foldersDir: string; listenDir: string }) {
 			try {
-				const response = await fetch('/api/settings/setFoldersDir', {
+				const response = await fetch(BASE_URL + '/api/settings/setFoldersDir', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify(foldersDirData),
@@ -292,7 +293,7 @@ export const useSettings = defineStore('settingsStore', {
 
 export const useSocket = defineStore('socket', {
 	state: () => ({
-		socket: io({ autoConnect: true }),
+		socket: io(BASE_URL, { autoConnect: true }),
 		scriptState: '',
 	}),
 	actions: {
