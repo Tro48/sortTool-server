@@ -25,4 +25,9 @@ export const useLogs = defineStore('logs', {
 			this.logsList.set(log.fileName, log);
 		},
 	},
+	getters: {
+		getLogsList: (state) => {
+			return Array.from(state.logsList.values()).reverse()
+		}
+	}
 });

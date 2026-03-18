@@ -1,36 +1,19 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
-import { nextTick, onMounted, ref, watch } from 'vue';
+import { onMounted } from 'vue';
 import { useLogs } from '../stores/useLogsStore';
 import { useSocket } from '../stores/useSettingsStore';
 import LogItem from './LogItem.vue';
 import Skeleton from './Skeleton.vue';
 
-const logsListRef = ref<HTMLUListElement | null>(null);
-
 const logs = useLogs();
 const socket = useSocket();
-const { logsList, isLoading } = storeToRefs(logs);
-
-async function scrollToBottom() {
-	await nextTick();
-	if (logsListRef.value) {
-		logsListRef.value.scrollTop = logsListRef.value.scrollHeight;
-	}
-}
+const { getLogsList, isLoading } = storeToRefs(logs);
 
 onMounted(() => {
 	logs.fetchGetAllLogs();
 	socket.onLog(logs.setLogItem);
-	scrollToBottom();
 });
-
-watch(
-	() => logsListRef,
-	() => {
-		scrollToBottom();
-	},
-);
 </script>
 <template>
 	<section class="section">
@@ -40,16 +23,16 @@ watch(
 			<span class="log-message">Сообщение</span>
 		</h4>
 		<div class="logs-list-container">
-			<ul v-if="isLoading" class="logs-list" ref="logsListRef">
+			<ul v-if="isLoading" class="logs-list">
 				<Skeleton v-for="n in 21" :key="'skeleton-' + n" />
 			</ul>
-			<ul v-else-if="logsList.size > 0" class="logs-list" ref="logsListRef">
+			<ul v-else-if="getLogsList.length > 0" class="logs-list">
 				<LogItem
-					v-for="[key, value] in logsList"
-					:key="key"
-					:name="value.fileName"
-					:state="value.state"
-					:message="value.message"
+					v-for="item in getLogsList"
+					:key="item.fileName"
+					:name="item.fileName"
+					:state="item.state"
+					:message="item.message"
 				/>
 			</ul>
 			<div v-else class="empty-message"><p>Логи отсутствуют</p></div>
